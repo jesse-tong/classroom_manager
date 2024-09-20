@@ -1,0 +1,48 @@
+{% extends 'navbar.html' %}
+
+{% block content %}
+    <div class="container">
+        <h3>Upcoming tasks</h3>
+        {% for upcomingTask in upcomingTasks %}
+        <a href="{% url 'task_details' upcomingTask.id %}" class="text-decoration-none">
+            <div class="border rounded p-3 mb-3">
+                <div class="d-flex">
+                    <div class="bg-primary rounded-circle me-2" style="width: 50px; height: 50px; position: relative;">
+                        {% if upcomingTask.isAssignment %}
+                            <i class="bi bi-journal-bookmark-fill text-white" style="font-size: 20px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
+                        {% else %}
+                            <i class="bi bi-layout-text-sidebar-reverse text-white" style="font-size: 20px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <h5 class="text-black">{{ upcomingTask.title }}</h5>
+                        <p class="text-secondary"><small>Due Date: {{ upcomingTask.deadline }}</small></p>
+                    </div>
+                </div>
+                
+            </div>
+        </a>
+        {% endfor %}
+        <h3>Late tasks</h3>
+        {% for lateTask in lateTasks %}
+        <a href="{% url 'task_details' lateTask.id %}" class="text-decoration-none">
+            <div class="border rounded p-3 mb-3">
+                <div class="d-flex">
+                    <div class="bg-primary rounded-circle me-2" style="width: 50px; height: 50px; position: relative;">
+                        {% if lateTask.isAssignment %}
+                            <i class="bi bi-journal-bookmark-fill text-white" style="font-size: 20px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
+                        {% else %}
+                            <i class="bi bi-layout-text-sidebar-reverse text-white" style="font-size: 20px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <h5 class="text-black">{{ lateTask.title }}</h5>
+                        <p class="text-secondary"><small>Due Date: {{ lateTask.deadline }}</small></p>
+                    </div>
+                </div>
+                
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+{% endblock %}

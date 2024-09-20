@@ -12,10 +12,13 @@ from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 from django.core.serializers import serialize
 from django.urls import reverse
+
 #utils
 from datetime import datetime as dt
+from dateutil import relativedelta
 from dateutil.parser import parse as dateparse
 from django.db.models import Count, Sum, F
+from django.utils import timezone
 from . import utils
 import json
 
@@ -520,12 +523,17 @@ def submissionDetailsPage(request: HttpRequest, submissionId: int):
         return redirect(reverse('submission_details', args=[submissionId]))
     
 @login_required(login_url='login')
-def allTaskDeadlines(request: HttpRequest):
+def allTaskSchedules(request: HttpRequest):
     if request.method == 'GET':
-        tasks = ClassroomTask.objects.filter(classroom__students__id__contains=request.user.id).all()
-        absolute_url = request.scheme + '://' + request.get_host()
-        context = {'tasks': tasks, 'absolute_url': absolute_url}
-        return render(request, 'all_task_deadlines.html', context)
+        now = timezone.now()
+        lateTaskScope = now - relativedelta.relativedelta(months=2)
+        upcomingTasks = ClassroomTask.objects.filter((Q(classroom__students__id__contains=request.user.id) 
+                                                      |Q (classroom__teachers__id__contains=request.user.id) )& Q(deadline__gte=now) ).all()
+        lateTasks = ClassroomTask.objects.filter((Q(classroom__students__id__contains=request.user.id) 
+                                                      |Q (classroom__teachers__id__contains=request.user.id) )& Q(deadline__gte=lateTaskScope) ).all()
+
+        context = {'upcomingTasks': upcomingTasks, 'lateTasks': lateTasks}
+        return render(request, 'all_task_schedules.html', context)
     else:
         return render(request, '404page.html')
     
