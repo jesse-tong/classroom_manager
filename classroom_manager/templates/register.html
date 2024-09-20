@@ -1,0 +1,36 @@
+{% extends 'navbar.html' %}
+
+{% block content %}
+    <h1>Register</h1>
+    <form method="POST" class="needs-validation" action="{% url 'register' %}">
+        {% csrf_token %}
+        <!-- Add your form fields here -->
+        <div class="mb-3">
+            <label for="username" class="form-label">Username:</label>
+            <input type="text" class="form-control" id="username" name="username" required>
+            <div class="invalid-feedback">
+                Please enter a username.
+            </div>
+        </div>
+        
+        <div class="mb-3">
+            <label for="email" class="form-label">Email:</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+            <div class="invalid-feedback">
+                Please enter a valid email address.
+            </div>
+        </div>
+        
+        <div class="mb-3">
+            <label for="password" class="form-label">Password:</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+            <div class="invalid-feedback">
+                Please enter a password.
+            </div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Register</button>
+    </form>
+    
+    <p>Already have an account? <a href="{% url 'login' %}" class="btn btn-link">Login</a></p>
+{% endblock %}

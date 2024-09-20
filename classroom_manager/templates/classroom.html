@@ -1,0 +1,42 @@
+{% extends 'navbar.html' %}
+
+{% block content %}
+{% load static %}
+    <h1>Classrooms</h1>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.level_tag }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    <h2>As Teacher</h2>
+    {% for classroom in classroomsUserIsTeacher %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">{{ classroom.name }}</h5>
+                <p class="card-text">{{ classroom.description|truncatechars:50 }}</p>
+                <a href="/classroom/{{ classroom.id }}" class="btn btn-primary">View</a>
+                <a href="/classroom/edit/{{ classroom.id }}" class="btn btn-secondary">Edit</a>
+                <form action="/classroom/{{ classroom.id }}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="_method" value="delete">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i><span>Delete</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    {% endfor %}
+
+    <h2>As Student</h2>
+    {% for classroom in classroomsUserIsStudent %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">{{ classroom.name }}</h5>
+                <p class="card-text">{{ classroom.description|truncatechars:50 }}</p>
+                <a href="/classroom/{{ classroom.id }}" class="btn btn-primary">View</a>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends 'navbar.html' %}
+
+{% block content %}
+    <h4>Create classroom task/assignment</h4>
+
+    {% if isTeacher %}
+        <form action="{% url "task_create" classroom.id %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="title" class="form-label">Title:</label>
+                <input type="text" id="title" name="title" class="form-control">
+            </div>
+            <div class="mb-3">
+                <input type="checkbox" id="isAssignment" name="isAssignment" value="ok" class="form-check-input">
+                <label for="isAssignment" class="form-check-label">Is Assignment</label>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Description:</label>
+                <textarea id="description" name="description" class="form-control"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="deadline" class="form-label">Deadline:</label>
+                <input type="datetime-local" id="deadline" name="deadline" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label for="files" class="form-label">Files:</label>
+                <input type="file" id="files" name="files" class="form-control" multiple>
+            </div>
+            <button type="submit" class="btn btn-primary">Create Task</button>
+        </form>
+    {% else %}
+        <p>You are not authorized to create tasks for this classroom.</p>
+    {% endif %}
+{% endblock %}

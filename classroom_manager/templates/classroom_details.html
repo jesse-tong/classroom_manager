@@ -1,0 +1,58 @@
+{% extends 'navbar.html' %}
+
+{% block content %}
+{% load static %}
+    <div class="container">
+        
+        <div style="width: 100%;" class="mt-3">
+            <img style="width: 100%; border-radius: 15px;"  src="{% static classroom.background %}"/ >
+            <div style="padding: 1rem 1.5rem; position: absolute; top: 20%; left: 10%; width: 100%; color: white;">
+                <h2 style="text-overflow: ellipsis; overflow: hidden; display: block; whitespace: no-wrap;">{{ classroom.name }}</h2>
+            </div>
+        </div>
+        <div>
+            <p>{{ classroom.description }}</p>
+
+            <h5>Students</h5>
+            <ul>
+                {% for student in students %}
+                    <li>{{ student.username }} - Email: {{ student.email }} 
+                        
+                    </li>
+
+                {% endfor %}
+            </ul>
+
+            <h5>Teachers</h5>
+            <ul>
+                {% for teacher in teachers %}
+                    <li>{{ teacher.username }} - Email: {{ teacher.email }}</li>
+                {% endfor %}
+            </ul>
+            <a href="{% url 'task_create' classroom.id %}" class="btn btn-primary">Create classroom task/assignment</a>
+            <h3>Assignments</h3>
+            <div>
+                {% for task in tasks %}
+                <a href="{% url 'task_details' task.id %}" class="text-decoration-none">
+                    <div class="border rounded p-3 mb-3">
+                        <div class="d-flex">
+                            <div class="bg-primary rounded-circle me-2" style="width: 50px; height: 50px; position: relative;">
+                                {% if task.isAssignment %}
+                                    <i class="bi bi-journal-bookmark-fill text-white" style="font-size: 20px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
+                                {% else %}
+                                    <i class="bi bi-layout-text-sidebar-reverse text-white" style="font-size: 20px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <h5 class="text-black">{{ task.title }}</h5>
+                                <p class="text-secondary"><small>Due Date: {{ task.deadline }}</small></p>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

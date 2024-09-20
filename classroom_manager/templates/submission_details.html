@@ -1,0 +1,69 @@
+{% extends 'navbar.html' %}
+
+{% block content %}
+    <div class="container">
+        <h1>Submission Details</h1>
+        <hr>
+
+        <h2>Student Information</h2>
+        <p>Student ID: {{ submission.student.id }}</p>
+        <p>Student Username: {{ submission.student.username }}</p>
+        <p>Student Email: {{ submission.student.email }}</p>
+
+        <h2>Task Information</h2>
+        <p>Task ID: {{ submission.task.id }}</p>
+        <p>Task Title: {{ submission.task.title }}</p>
+
+        <h2>Last Submission</h2>
+        <p>Last Edited Date: {{ submission.lastSubmission }}</p>
+
+        {% if submission.gpa %}
+            <p>GPA: {{ submission.gpa }}</p>
+        {% endif %}
+
+        <h5>Submission Files</h5>
+        {% for file in submissionFiles %}
+            <p>{{ file.file.name }}<a href="{{ file.file.url }}" class="btn btn-primary ms-2">Download</a></p>
+            
+        {% endfor %}
+
+        {% if submission.student.id == request.user.id %}
+        <button type="button" class="btn btn-danger mt-3" data-bs-toggle="modal" data-bs-target="#deleteSubmissionModal">
+            Delete Submission
+        </button>
+          
+          <!-- Modal -->
+        <div class="modal fade" id="deleteSubmissionModal" tabindex="-1" aria-labelledby="deleteSubmissionModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="deleteSubmissionModalLabel">Delete submission</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Do you want to delete the submission?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <form action="/classroom/task/{{submission.task.id}}/submit" method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="_method" value="delete">
+                            <button type="submit" class="btn btn-danger">Delete Submission</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>  
+            
+        {% endif %}
+        {% if isTeacher %}
+            <h5>Edit GPA</h5>
+            <form action="/classroom/submission/{{submission.id}}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <label for="gpaEdit">GPA:</label>
+                <input type="number" id="gpaEdit" name="gpa" step="0.01" min="0" max="100" class="form-control">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        {% endif %}
+    </div>
+{% endblock %}
