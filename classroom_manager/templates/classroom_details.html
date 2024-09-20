@@ -10,26 +10,23 @@
                 <h2 style="text-overflow: ellipsis; overflow: hidden; display: block; whitespace: no-wrap;">{{ classroom.name }}</h2>
             </div>
         </div>
+        <ul class="nav nav-tabs mb-2 mt-3">
+            <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#">Assignments</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'classroom_details_users' classroom.id %}">Students and teachers</a>
+            </li>
+        </ul>
         <div>
+            
+            <h4 class="mt-2">Classroom Description</h4>
             <p>{{ classroom.description }}</p>
 
-            <h5>Students</h5>
-            <ul>
-                {% for student in students %}
-                    <li>{{ student.username }} - Email: {{ student.email }} 
-                        
-                    </li>
-
-                {% endfor %}
-            </ul>
-
-            <h5>Teachers</h5>
-            <ul>
-                {% for teacher in teachers %}
-                    <li>{{ teacher.username }} - Email: {{ teacher.email }}</li>
-                {% endfor %}
-            </ul>
+            
+            {% if isTeacher %}
             <a href="{% url 'task_create' classroom.id %}" class="btn btn-primary">Create classroom task/assignment</a>
+            {% endif %}
             <h3>Assignments</h3>
             <div>
                 {% for task in tasks %}

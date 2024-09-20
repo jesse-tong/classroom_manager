@@ -240,6 +240,20 @@ def searchUserByEmailOrUsername(request: HttpRequest):
         return JsonResponse(status=400, data={'status': 'Invalid HTTP method'})
 
 @login_required(login_url='login')
+def classroomUsers(request: HttpRequest, classroomId):
+    if request.method == 'GET':
+        classroom = Classroom.objects.filter(id=classroomId).first()
+    if classroom != None:
+        students = classroom.students.all()
+        teachers = classroom.teachers.all()
+        isCurrentUserTeacher = isTeacher(request.user.id, classroom.id)
+        context = {'classroom': classroom, 'students': students, 'teachers': teachers, 'classroomId': id, 
+                     'isTeacher': isCurrentUserTeacher}
+        return render(request, 'classroom_details_users.html', context)
+    else:
+        return render(request, '404page.html')
+
+@login_required(login_url='login')
 def classroomDetailPage(request: HttpRequest, id):
     if request.method == 'GET':
         classroom = Classroom.objects.filter(id=id).first()
@@ -247,7 +261,9 @@ def classroomDetailPage(request: HttpRequest, id):
             students = classroom.students.all()
             teachers = classroom.teachers.all()
             tasks = ClassroomTask.objects.filter(classroom=classroom).all()
-            context = {'classroom': classroom, 'students': students, 'teachers': teachers, 'classroomId': id, 'tasks': tasks}
+            isCurrentUserTeacher = isTeacher(request.user.id, classroom.id)
+            context = {'classroom': classroom, 'students': students, 'teachers': teachers, 'classroomId': id, 
+                       'tasks': tasks, 'isTeacher': isCurrentUserTeacher}
             return render(request, 'classroom_details.html', context)
         else:
             return render(request, '404page.html')
@@ -295,7 +311,8 @@ def classroomAssignmentPage(request: HttpRequest, id):
     classroom = Classroom.objects.filter(id=id).first()
     if classroom != None:
         tasks = ClassroomTask.objects.filter(classroom=classroom)
-        context = {'classroom': classroom, 'tasks': tasks }
+        isCurrentUserTeacher = isTeacher(request.user.id, classroomId=classroom.id)
+        context = {'classroom': classroom, 'tasks': tasks, 'isTeacher': isCurrentUserTeacher }
         return render(request, 'classroom_details.html', context)
     else:
         return render(request, '404page.html')
@@ -310,7 +327,10 @@ def getEditDeleteTaskById(request: HttpRequest, taskId: int):
             return render(request, '404page.html')
         isUserTeacher = isTeacher(request.user.id, task.classroom.id)
         userSubmissionFiles = SubmissionFile.objects.filter(submission=userSubmission).all()
-        context = {'task': task, 'taskFiles': taskFiles, 'isTeacher': isUserTeacher, 'userSubmission': userSubmission, 'submissionFiles': userSubmissionFiles}
+
+        now = datetime.now(task.deadline.tzinfo); task_due = task.deadline; isBeforeDue = now < task_due
+        context = {'task': task, 'taskFiles': taskFiles, 'isTeacher': isUserTeacher, 'userSubmission': userSubmission, 
+                   'submissionFiles': userSubmissionFiles, 'isBeforeDue': isBeforeDue}
         return render(request, 'task_details.html', context)
     if request.method == 'POST':
         if request.POST.get('_method') == 'put':

@@ -2,7 +2,7 @@
 
 {% block content %}
 {% load static %}
-    <h1>Classrooms</h1>
+    
     {% if messages %}
         {% for message in messages %}
             <div class="alert alert-{{ message.level_tag }}">
@@ -10,8 +10,16 @@
             </div>
         {% endfor %}
     {% endif %}
+    <div class="mb-2 mt-3 d-flex justify-content-between align-items-center">
+        <div><h2>Classrooms</h2></div>
+        <a class="btn btn-primary " role="button" href="{% url 'classroom_create' %}">Create classroom</a>
+    </div>
+    
+    {% if classroomsUserIsTeacher%}
     <h2>As Teacher</h2>
+    {% endif%}
     {% for classroom in classroomsUserIsTeacher %}
+    
         <div class="card mb-3">
             <div class="card-body">
                 <h5 class="card-title">{{ classroom.name }}</h5>
@@ -29,8 +37,11 @@
         </div>
     {% endfor %}
 
+    {% if classroomsUserIsStudent%}
     <h2>As Student</h2>
+    {% endif%}
     {% for classroom in classroomsUserIsStudent %}
+    
         <div class="card mb-3">
             <div class="card-body">
                 <h5 class="card-title">{{ classroom.name }}</h5>
