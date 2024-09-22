@@ -227,10 +227,10 @@ def addStudentToClassroom(request:HttpRequest, classroomId: int, studentId: int)
         classroom.teachers.remove(student)
         classroom.students.add(student)
         messages.success(request, "Add student successfully!")
-        return redirect('/classroom/edit/' + str(classroomId))
+        return redirect(reverse('classroom_edit', args=[classroomId]))
     else:
         messages.error(request, "Student or classroom does not exist!")
-        return redirect('/classroom/edit/' + str(classroomId))
+        return redirect(reverse('classroom_edit', args=[classroomId]))
 
 #Search user by email or username (case sentitive)
 @csrf_exempt
@@ -331,9 +331,11 @@ def getEditDeleteTaskById(request: HttpRequest, taskId: int):
         isUserTeacher = isTeacher(request.user.id, task.classroom.id)
         userSubmissionFiles = SubmissionFile.objects.filter(submission=userSubmission).all()
 
+        comments = TaskComment.objects.filter(task=task).all()
+
         now = datetime.now(task.deadline.tzinfo); task_due = task.deadline; isBeforeDue = now < task_due
         context = {'task': task, 'taskFiles': taskFiles, 'isTeacher': isUserTeacher, 'userSubmission': userSubmission, 
-                   'submissionFiles': userSubmissionFiles, 'isBeforeDue': isBeforeDue}
+                   'submissionFiles': userSubmissionFiles, 'isBeforeDue': isBeforeDue, 'comments': comments, 'currentUser': request.user}
         return render(request, 'task_details.html', context)
     if request.method == 'POST':
         if request.POST.get('_method') == 'put':
@@ -368,7 +370,8 @@ def getEditDeleteTaskById(request: HttpRequest, taskId: int):
             task.save()
             taskFiles = TaskFile.objects.filter(task=task).all()
             context = {'task': task, taskFiles: taskFiles}
-            return redirect('/classroom/task/' + str(taskId))
+            messages.success(request, 'Edit task/assignment successfully!')
+            return redirect(reverse('task_details', args=[taskId]))
         elif request.POST.get('_method') == 'delete':
             task = ClassroomTask.objects.filter(id=taskId).first()
             if task == None:
@@ -530,7 +533,7 @@ def allTaskSchedules(request: HttpRequest):
         upcomingTasks = ClassroomTask.objects.filter((Q(classroom__students__id__contains=request.user.id) 
                                                       |Q (classroom__teachers__id__contains=request.user.id) )& Q(deadline__gte=now) ).all()
         lateTasks = ClassroomTask.objects.filter((Q(classroom__students__id__contains=request.user.id) 
-                                                      |Q (classroom__teachers__id__contains=request.user.id) )& Q(deadline__gte=lateTaskScope) ).all()
+                                                      |Q (classroom__teachers__id__contains=request.user.id) )& Q(deadline__gte=lateTaskScope) & Q(deadline__lte=now)).all()
 
         context = {'upcomingTasks': upcomingTasks, 'lateTasks': lateTasks}
         return render(request, 'all_task_schedules.html', context)
@@ -543,5 +546,43 @@ def getTaskDeadlines(request: HttpRequest):
         tasks = ClassroomTask.objects.filter(classroom__students__id__contains=request.user.id).all().values()
         tasks_json = serialize('json', tasks)
         return HttpResponse(tasks_json, content_type='application/json')
+    else:
+        return render(request, '404page.html')
+    
+@login_required(login_url='login')
+def addCommentToTask(request: HttpRequest, taskId: int):
+    if request.method == 'POST':
+        task = ClassroomTask.objects.filter(id=taskId).first()
+        if task == None:
+            return render(request, '404page.html')
+        comment = request.POST.get('comment')
+        if comment == None:
+            messages.error(request, 'Comment cannot be empty!')
+            return redirect(reverse('task_details', args=[taskId]))
+        newComment = Comment.objects.create(commenter=request.user, comment=comment, task=task)
+        return redirect(reverse('task_details', args=[taskId]))
+    else:
+        return render(request, '404page.html')
+    
+@login_required(login_url='login')
+def editDeleteComment(request: HttpRequest, commentId: int):
+    if request.method == 'POST':
+        if request.POST.get('_method') == 'delete':
+            comment = Comment.objects.filter(id=commentId).first()
+            if comment == None:
+                return render(request, '404page.html')
+            comment.delete()
+            return redirect(reverse('task_details', args=[comment.task.id]))
+        elif request.POST.get('_method') == 'put':
+            comment = Comment.objects.filter(id=commentId).first()
+            if comment == None:
+                return render(request, '404page.html')
+            newComment = request.POST.get('comment')
+            if newComment == None:
+                messages.error(request, 'Comment cannot be empty!')
+                return redirect(reverse('task_details', args=[comment.task.id]))
+            comment.comment = newComment
+            comment.save()
+            return redirect(reverse('task_details', args=[comment.task.id]))
     else:
         return render(request, '404page.html')

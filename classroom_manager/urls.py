@@ -25,5 +25,7 @@ urlpatterns = [
     path('classroom/task/<int:taskId>', views.getEditDeleteTaskById, name="task_details"),
     path('classroom/submission/<int:submissionId>', views.submissionDetailsPage, name="submission_details"),
     path('classroom/task/<int:taskId>/submissions', views.getSubmissionsByTaskId, name="submissions_by_task_id"),
+    path('classroom/task/<int:taskId>/add-comment', views.addCommentToTask, name="add_comment"),
+    path('classroom/comment/<int:commentId>', views.editDeleteComment, name="edit_delete_comment"),
     path('user/schedule', views.allTaskSchedules, name="all_task_schedules"),
 ]

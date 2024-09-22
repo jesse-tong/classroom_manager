@@ -42,6 +42,14 @@ class ClassroomTask(models.Model):
             'acceptLateSubmission': self.acceptLateSubmission,
         }
 
+class TaskComment(models.Model):
+    commenter = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment = models.CharField(max_length=5000)
+    task = models.ForeignKey(ClassroomTask, on_delete=models.CASCADE)
+    creationDate = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return self.comment[:50] + '... from user ' + str(self.commenter.username)
+
 class Comment(models.Model):
     commenter = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.CharField(max_length=5000)
@@ -59,15 +67,23 @@ class Submission(models.Model):
     def __str__(self):
         return self.student.username + '\'s submission on task ' + self.task.description[:30]
 
+def task_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/task_<id>/<filename>
+    return "task_{0}/{1}".format(instance.task.id, filename)
+
+def submission_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/submission_<id>/<filename>
+    return "submission_{0}/{1}".format(instance.submission.id, filename)
+
 class SubmissionFile(models.Model):
-    file = models.FileField(upload_to='submissions', null=True)
+    file = models.FileField(upload_to=submission_directory_path, null=True)
     comment = models.CharField(max_length=3000)
     submission = models.ForeignKey(Submission, on_delete=models.CASCADE)
     def __str__(self):
         return self.fileName
 
 class TaskFile(models.Model):
-    file = models.FileField(upload_to='tasks',null=True)
+    file = models.FileField(upload_to=task_directory_path,null=True)
     comment = models.CharField(max_length=3000)
     task = models.ForeignKey(ClassroomTask, on_delete=models.CASCADE)
     def __str__(self):

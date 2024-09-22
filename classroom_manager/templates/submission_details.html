@@ -2,9 +2,16 @@
 
 {% block content %}
     <div class="container">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li{% if message.tags %} class="alert {{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
         <h1>Submission Details</h1>
         <hr>
-
+        <a class="btn btn-primary" href="{% url "task_details" submission.task.id %}" role="button">Return to task/assignment page</a>
         <h2>Student Information</h2>
         <p>Student ID: {{ submission.student.id }}</p>
         <p>Student Username: {{ submission.student.username }}</p>
@@ -23,7 +30,13 @@
 
         <h5>Submission Files</h5>
         {% for file in submissionFiles %}
-            <p>{{ file.file.name }}<a href="{{ file.file.url }}" class="btn btn-primary ms-2">Download</a></p>
+        <div class="border rounded-2 px-3 py-3 d-flex justify-content-between align-items-center mb-2 shadow-sm">
+            <div>
+                <a class="text-decoration-none" href="{{ file.file.url }}">{{ file.file.name }}</a>
+                ({{ file.file.size|filesizeformat }})
+            </div>
+            <a class="ms-3 btn btn-primary" role="button" href="{{ file.file.url }}" download>Download</a>
+        </div>
             
         {% endfor %}
 
@@ -45,7 +58,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <form action="/classroom/task/{{submission.task.id}}/submit" method="POST">
+                        <form action="{% url 'submit_task' submission.task.id %}" method="POST">
                             {% csrf_token %}
                             <input type="hidden" name="_method" value="delete">
                             <button type="submit" class="btn btn-danger">Delete Submission</button>
@@ -58,11 +71,11 @@
         {% endif %}
         {% if isTeacher %}
             <h5>Edit GPA</h5>
-            <form action="/classroom/submission/{{submission.id}}" method="POST" enctype="multipart/form-data">
+            <form action="{% url 'submission_details' submission.id %}" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 <label for="gpaEdit">GPA:</label>
                 <input type="number" id="gpaEdit" name="gpa" step="0.01" min="0" max="100" class="form-control">
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary mt-2">Submit</button>
             </form>
         {% endif %}
     </div>

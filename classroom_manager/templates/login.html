@@ -3,11 +3,11 @@
 {% block content %}
     <h1>Login</h1>
     {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-danger" role="alert">
-                {{ message }}
-            </div>
-        {% endfor %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} class="alert {{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
     {% endif %}
     <form method="POST" action="{% url 'login' %}">
         {% csrf_token %}
