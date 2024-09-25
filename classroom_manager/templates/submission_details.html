@@ -9,9 +9,13 @@
                 {% endfor %}
             </ul>
         {% endif %}
-        <h1>Submission Details</h1>
+
+        <div class="d-flex justify-content-between align-items-center">
+            <h3>Submission Details</h3>
+            <a class="btn btn-primary" href="{% url "task_details" submission.task.id %}" role="button">Return to task/assignment page</a>
+        </div>
         <hr>
-        <a class="btn btn-primary" href="{% url "task_details" submission.task.id %}" role="button">Return to task/assignment page</a>
+        
         <h2>Student Information</h2>
         <p>Student ID: {{ submission.student.id }}</p>
         <p>Student Username: {{ submission.student.username }}</p>
@@ -20,28 +24,47 @@
         <h2>Task Information</h2>
         <p>Task ID: {{ submission.task.id }}</p>
         <p>Task Title: {{ submission.task.title }}</p>
+        
+        <div class="row">
+            <div class="col-12 {{ isTeacher|yesno:"col-xl-9,col-xl-12"}}">
+                <h4>Last Submission</h4>
+                <p>Last Edited Date: {{ submission.lastSubmission }}</p>
 
-        <h2>Last Submission</h2>
-        <p>Last Edited Date: {{ submission.lastSubmission }}</p>
+                {% if submission.gpa %}
+                    <p>GPA: {{ submission.gpa }}</p>
+                {% else %}
+                    <p>GPA: Not graded yet</p>
+                {% endif %}
 
-        {% if submission.gpa %}
-            <p>GPA: {{ submission.gpa }}</p>
-        {% endif %}
 
-        <h5>Submission Files</h5>
-        {% for file in submissionFiles %}
-        <div class="border rounded-2 px-3 py-3 d-flex justify-content-between align-items-center mb-2 shadow-sm">
-            <div>
-                <a class="text-decoration-none" href="{{ file.file.url }}">{{ file.file.name }}</a>
-                ({{ file.file.size|filesizeformat }})
+                <h5>Submission Files</h5>
+                {% for file in submissionFiles %}
+                <div class="border rounded-2 px-3 py-3 d-flex justify-content-between align-items-center mb-2 shadow-sm">
+                    <div>
+                        <a class="text-decoration-none" href="{{ file.file.url }}">{{ file.file.name }}</a>
+                        ({{ file.file.size|filesizeformat }})
+                    </div>
+                    <a class="ms-3 btn btn-primary" role="button" href="{{ file.file.url }}" download>Download</a>
+                </div>
+                {% endfor %}
+
             </div>
-            <a class="ms-3 btn btn-primary" role="button" href="{{ file.file.url }}" download>Download</a>
-        </div>
+            {% if isTeacher %}
+            <div class="col-3 border-start">
             
-        {% endfor %}
+                <h5>Edit GPA</h5>
+                <form action="{% url 'submission_details' submission.id %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <label for="gpaEdit">GPA:</label>
+                    <input type="number" id="gpaEdit" name="gpa" step="0.01" min="0" max="100" class="form-control">
+                    <button type="submit" class="btn btn-primary mt-2">Submit</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
 
         {% if submission.student.id == request.user.id %}
-        <button type="button" class="btn btn-danger mt-3" data-bs-toggle="modal" data-bs-target="#deleteSubmissionModal">
+        <button type="button" class="btn btn-danger mt-2 mb-3" data-bs-toggle="modal" data-bs-target="#deleteSubmissionModal">
             Delete Submission
         </button>
           
@@ -69,14 +92,6 @@
         </div>  
             
         {% endif %}
-        {% if isTeacher %}
-            <h5>Edit GPA</h5>
-            <form action="{% url 'submission_details' submission.id %}" method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                <label for="gpaEdit">GPA:</label>
-                <input type="number" id="gpaEdit" name="gpa" step="0.01" min="0" max="100" class="form-control">
-                <button type="submit" class="btn btn-primary mt-2">Submit</button>
-            </form>
-        {% endif %}
+        
     </div>
 {% endblock %}

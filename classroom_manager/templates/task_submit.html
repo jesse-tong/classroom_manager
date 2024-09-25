@@ -5,12 +5,12 @@
     {% if task.title %}
         <h2>{{ task.title }}</h2>
     {% endif %}
-    <p class="text-secondary">Deadline: {{ task.deadline }}</p>
-    <p>Task ID: {{ task.id }}</p>
-    <p>Is Assignment: {{ task.isAssignment }}</p>
-    <p>Accepts Late Submission: {{ task.acceptLateSubmission }}</p>
-    <p>Title: {{ task.title }}</p>
-    
+    <div class="mt-3">
+        <p class="text-secondary mb-0">Deadline: {{ task.deadline }}</p>
+        <p class="text-secondary"><small>Task ID: {{ task.id }} - {{ task.isAssignment|yesno:"Assignment,Classroom Task" }} - 
+            {{ task.acceptLateSubmission|yesno:"Accepting lates submissions,Not accepting late submission" }}</small>
+        </p>
+    </div>
     <hr class="hr" />
     <h4>Submission Status</h4>
 
