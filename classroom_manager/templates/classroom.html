@@ -48,18 +48,22 @@
     {% if classroomsUserIsStudent%}
     <h3>As Student</h3>
     {% endif%}
-    {% for classroom in classroomsUserIsStudent %}
-    <div class="col-12 col-lg-6 col-xxl-4 px-2 py-2"></div>
-        <div class="card">
-            <img class="card-img-top" src="{% static classroom.background %}" />
-            <div class="card-body">
-                <h5 class="card-title">{{ classroom.name }}</h5>
-                <p class="card-text">{{ classroom.description|truncatechars:50 }}</p>
-                <a href="{% url 'classroom_details' classroom.id %}" class="btn btn-primary">View</a>
+
+    <div class="row">
+        {% for classroom in classroomsUserIsStudent %}
+        <div class="col-12 col-lg-6 col-xxl-4 px-2 py-2">
+            <div class="card">
+                <img class="card-img-top" src="{% static classroom.background %}" />
+                <div class="card-body">
+                    <h5 class="card-title">{{ classroom.name }}</h5>
+                    <p class="card-text">{{ classroom.description|truncatechars:50 }}</p>
+                    <a href="{% url 'classroom_details' classroom.id %}" class="btn btn-primary">View</a>
+                    
+                </div>
             </div>
         </div>
+        {% endfor %}
     </div>
-    {% endfor %}
     
     <!-- Start create classroom modal -->
     <div class="modal fade" id="createClassroomModal" tabindex="-1" aria-labelledby="createClassroomModalLabel" aria-hidden="true">

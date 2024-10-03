@@ -50,14 +50,6 @@ class TaskComment(models.Model):
     def __str__(self):
         return self.comment[:50] + '... from user ' + str(self.commenter.username)
 
-class Comment(models.Model):
-    commenter = models.ForeignKey(User, on_delete=models.CASCADE)
-    comment = models.CharField(max_length=5000)
-    task = models.ForeignKey(ClassroomTask, on_delete=models.CASCADE)
-    creationDate = models.DateTimeField(auto_now_add=True)
-    def __str__(self):
-        return self.comment[:50] + '... from user' + str(self.commenter.username)
-
 
 class Submission(models.Model):
     student = models.ForeignKey(User, on_delete=models.CASCADE)

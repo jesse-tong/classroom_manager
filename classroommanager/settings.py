@@ -97,12 +97,8 @@ WSGI_APPLICATION = 'classroommanager.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        "NAME": "classroom_manager",
-        "USER": "jessetong",
-        "PASSWORD": "spellcasting2002",
-        "HOST": "127.0.0.1",
-        "PORT": "3306",
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / "db.sqlite3",
     }
 }
 

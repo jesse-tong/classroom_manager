@@ -21,18 +21,38 @@
         <div>
 
             <h5>Students</h5>
-            <ul>
-                {% for student in students %}
-                    <li>{{ student.username }} - Email: {{ student.email }} </li>
-                {% endfor %}
-            </ul>
+            
+            {% for student in students %}
+                <div class="border rounded p-3 mb-3">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-primary rounded-circle me-2" style="width: 50px; height: 50px; position: relative;">
+                            <i class="bi bi-journal-bookmark-fill text-white" style="font-size: 20px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
+                        </div>
+                        <div class="ms-2">
+                            <h5 class="text-black m-auto">{{ student.username }}</h5>
+                            <p class="text-secondary m-auto"><small>Email: {{ student.email }}</small></p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            
 
             <h5>Teachers</h5>
-            <ul>
-                {% for teacher in teachers %}
-                    <li>{{ teacher.username }} - Email: {{ teacher.email }}</li>
-                {% endfor %}
-            </ul>
+            
+            {% for teacher in teachers %}
+            <div class="border rounded p-3 mb-3">
+                <div class="d-flex align-items-center">
+                    <div class="bg-primary rounded-circle me-2" style="width: 50px; height: 50px; position: relative;">
+                        <i class="bi bi-journal-bookmark-fill text-white" style="font-size: 20px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
+                    </div>
+                    <div class="ms-2">
+                        <h5 class="text-black m-auto">{{ teacher.username }}</h5>
+                        <p class="text-secondary m-auto"><small>Email: {{ teacher.email }}</small></p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            
         </div>
     </div>
 {% endblock %}

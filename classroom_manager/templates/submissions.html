@@ -8,20 +8,22 @@
         <table class="table">
             <thead>
                 <tr>
+                    <th>Submission ID</th>
                     <th>Student Username</th>
                     <th>Student Email</th>
                     <th>Student ID</th>
-                    <th>Submission ID</th>
+                    <th>GPA</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for submission in submissions %}
                     <tr>
+                        <td>{{ submission.id }}</td>
                         <td>{{ submission.student.username }}</td>
                         <td>{{ submission.student.email }}</td>
                         <td>{{ submission.student.id }}</td>
-                        <td>{{ submission.id }}</td>
+                        <td>{{ submission.gpa }}</td>
                         <td>
                             <a href="{% url 'submission_details' submission.id %}">View Submission</a>
                         </td>
