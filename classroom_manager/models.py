@@ -5,12 +5,15 @@ import random
 
 asset_backgrounds = ['img_backtoschool.jpg', 'img_code.jpg', 'img_gamenight.jpg', 'img_hobby.jpg', 'img_learnlanguage.jpg', 'img_violin2.jpg', ]
 
+def get_random_class_image():
+    return random.choice(asset_backgrounds)
+
 class Classroom(models.Model):
     name = models.CharField(max_length=200)
     teachers = models.ManyToManyField(User, related_name="classroom_teacher")
     students = models.ManyToManyField(User, related_name="classroom_student")
     description = models.CharField(max_length=3000)
-    background = models.CharField(max_length=200, default=random.choice(asset_backgrounds))
+    background = models.CharField(max_length=200, default=get_random_class_image)
     def __str__(self):
         return self.name
     def asjson(self):

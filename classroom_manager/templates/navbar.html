@@ -9,8 +9,11 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <!-- Filepond -->
+    <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
     {% load static %}
     <link href="{% static 'mdb5-free-standard/css/mdb.min.css' %}" rel="stylesheet" type="text/css"/>
+    <link href="{% static 'calendar.css' %}" rel="stylesheet" type="text/css"/>
     {% block script %}
     {% endblock %}
 </head>
@@ -54,6 +57,11 @@
         {% endblock %}
     </div>
     
-    
+    <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
+
+    <!-- Turn all file input elements into ponds -->
+    <script>
+    FilePond.parse(document.body);
+    </script>
 </body>
 </html>

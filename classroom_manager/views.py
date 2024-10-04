@@ -334,7 +334,13 @@ def getEditDeleteTaskById(request: HttpRequest, taskId: int):
         comments = TaskComment.objects.filter(task=task).all()
         editingCommentId = request.GET.get('editingCommentId')
 
-        now = datetime.now(task.deadline.tzinfo); task_due = task.deadline; isBeforeDue = now < task_due
+        if task.deadline != None:
+            now = datetime.now(task.deadline.tzinfo)
+            task_due = task.deadline
+            isBeforeDue = now < task_due
+        else:
+            isBeforeDue = False
+
         context = {'task': task, 'taskFiles': taskFiles, 'isTeacher': isUserTeacher, 'userSubmission': userSubmission, 
                    'submissionFiles': userSubmissionFiles, 'isBeforeDue': isBeforeDue, 'comments': comments, 
                    'currentUser': request.user, 'editingCommentId': editingCommentId}
@@ -413,13 +419,14 @@ def createTaskPage(request: HttpRequest, classroomId: int):
 
         if classroom == None:
             return render(request, '404page.html')
-        newTask = ClassroomTask.objects.create(isAssignment = isAssignment, classroom=classroom, title=title, description=description, deadline=dt.now())
+        newTask = ClassroomTask.objects.create(isAssignment = isAssignment, classroom=classroom, title=title, description=description)
         files = request.FILES.getlist('files')
 
         taskfiles = []
         for file in files:
             taskfiles.append(TaskFile(file=file, task=newTask))
         TaskFile.objects.bulk_create(taskfiles)
+        
         try:
             deadline = dateparse(deadline) if deadline != None and deadline != '' else None
         except:
@@ -427,7 +434,9 @@ def createTaskPage(request: HttpRequest, classroomId: int):
             return redirect(reverse('classroom_details', args=[classroomId]))
         newTask.isAssignment = isAssignment
         newTask.description = description
-        newTask.deadline = deadline
+        if deadline != None:
+            newTask.deadline = deadline
+
         newTask.save()
 
         return redirect('/classroom/task/' + str(newTask.id))
@@ -537,7 +546,29 @@ def allTaskSchedules(request: HttpRequest):
         lateTasks = ClassroomTask.objects.filter((Q(classroom__students__id__contains=request.user.id) 
                                                       |Q (classroom__teachers__id__contains=request.user.id) )& Q(deadline__gte=lateTaskScope) & Q(deadline__lte=now)).all()
 
-        context = {'upcomingTasks': upcomingTasks, 'lateTasks': lateTasks}
+        #Variables for calendar
+        taskDates = [task.deadline for task in upcomingTasks] + [task.deadline for task in lateTasks]
+        taskDates = list(set(taskDates))
+
+        daysWithDeadlines = []
+        for taskDate in taskDates:
+            if taskDate.month == now.month and taskDate.year == now.year:
+                daysWithDeadlines.append(taskDate.day)
+        
+        firstDay = now.replace(day=1)
+        firstDayWeekday = firstDay.weekday()
+        numberDaysOfMonth = (firstDay + relativedelta.relativedelta(months=1) - relativedelta.relativedelta(days=1)).day
+        currentDay = now.day
+
+        daysArray = list(range(1, numberDaysOfMonth + 1))
+        daysArray = [''] * firstDayWeekday + daysArray
+
+        monthString = now.strftime("%B")
+        yearString = str(now.year)
+
+        context = {'upcomingTasks': upcomingTasks, 'lateTasks': lateTasks, 
+                   'daysArray': daysArray, 'currentDay': currentDay, 'monthString': monthString, 
+                   'yearString': yearString, 'daysWithDeadlines': daysWithDeadlines}    
         return render(request, 'all_task_schedules.html', context)
     else:
         return render(request, '404page.html')

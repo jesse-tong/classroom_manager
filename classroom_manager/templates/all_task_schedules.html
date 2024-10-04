@@ -1,48 +1,91 @@
 {% extends 'navbar.html' %}
 
 {% block content %}
-    <div class="container">
-        <h3>Upcoming tasks</h3>
-        {% for upcomingTask in upcomingTasks %}
-        <a href="{% url 'task_details' upcomingTask.id %}" class="text-decoration-none">
-            <div class="border rounded p-3 mb-3">
-                <div class="d-flex align-items-center">
-                    <div class="bg-primary rounded-circle me-2" style="width: 50px; height: 50px; position: relative;">
-                        {% if upcomingTask.isAssignment %}
-                            <i class="bi bi-journal-bookmark-fill text-white" style="font-size: 20px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
-                        {% else %}
-                            <i class="bi bi-layout-text-sidebar-reverse text-white" style="font-size: 20px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
-                        {% endif %}
-                    </div>
-                    <div class="ms-2">
-                        <h5 class="text-black m-auto">{{ upcomingTask.title }}</h5>
-                        <p class="text-secondary m-auto"><small>Due Date: {{ upcomingTask.deadline }}</small></p>
-                    </div>
+    <div class="container py-3">
+        <div class="row">
+
+            <!-- Calendar -->
+            <div class="col-12 col-lg-4">
+                <div class="month">
+                    <ul>
+                    <li class="prev" style="list-style-type: none;">&#10094;</li>
+                    <li class="next" style="list-style-type: none;">&#10095;</li>
+                    <li style="list-style-type: none;">{{ monthString }}
+                        <br><span style="font-size:18px">{{ yearString }}</span>
+                    </li>
+                    </ul>
                 </div>
                 
-            </div>
-        </a>
-        {% endfor %}
-        <h3>Late tasks</h3>
-        {% for lateTask in lateTasks %}
-        <a href="{% url 'task_details' lateTask.id %}" class="text-decoration-none">
-            <div class="border rounded p-3 mb-3">
-                <div class="d-flex align-items-center">
-                    <div class="bg-primary rounded-circle me-2" style="width: 50px; height: 50px; position: relative;">
-                        {% if lateTask.isAssignment %}
-                            <i class="bi bi-journal-bookmark-fill text-white" style="font-size: 20px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
-                        {% else %}
-                            <i class="bi bi-layout-text-sidebar-reverse text-white" style="font-size: 20px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
-                        {% endif %}
-                    </div>
-                    <div class="ms-2">
-                        <h5 class="text-black m-auto">{{ lateTask.title }}</h5>
-                        <p class="text-secondary m-auto"><small>Due Date: {{ lateTask.deadline }}</small></p>
-                    </div>
-                </div>
+                <ul class="weekdays">
+                    <li>Mo</li>
+                    <li>Tu</li>
+                    <li>We</li>
+                    <li>Th</li>
+                    <li>Fr</li>
+                    <li>Sa</li>
+                    <li>Su</li>
+                </ul>
                 
+                <ul class="days">
+                {% for i in daysArray %}
+                    {% if i == currentDay and i in daysWithDeadlines %}
+                        <li><span class="active haveDeadline">{{ i }}</span></li>
+                    {% elif i == currentDay %}
+                        <li><span class="active">{{ i }}</span></li>
+                    {% elif i in daysWithDeadlines %}
+                        <li><span class="haveDeadline">{{ i }}</span></li>
+                    {% else %}
+                        <li>{{ i }}</li>
+                    {% endif %}
+                {% endfor %}
+                </ul> 
             </div>
-        </a>
-        {% endfor %}
+
+            <!-- Upcoming and late tasks-->
+            <div class="col-12 col-lg-8">
+                <h3>Upcoming tasks</h3>
+                {% for upcomingTask in upcomingTasks %}
+                <a href="{% url 'task_details' upcomingTask.id %}" class="text-decoration-none">
+                    <div class="border rounded p-3 mb-3">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-primary rounded-circle me-2" style="width: 50px; height: 50px; position: relative;">
+                                {% if upcomingTask.isAssignment %}
+                                    <i class="bi bi-journal-bookmark-fill text-white" style="font-size: 20px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
+                                {% else %}
+                                    <i class="bi bi-layout-text-sidebar-reverse text-white" style="font-size: 20px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
+                                {% endif %}
+                            </div>
+                            <div class="ms-2">
+                                <h5 class="text-black m-auto">{{ upcomingTask.title }}</h5>
+                                <p class="text-secondary m-auto"><small>Due Date: {{ upcomingTask.deadline }}</small></p>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </a>
+                {% endfor %}
+                <h3>Late tasks</h3>
+                {% for lateTask in lateTasks %}
+                <a href="{% url 'task_details' lateTask.id %}" class="text-decoration-none">
+                    <div class="border rounded p-3 mb-3">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-primary rounded-circle me-2" style="width: 50px; height: 50px; position: relative;">
+                                {% if lateTask.isAssignment %}
+                                    <i class="bi bi-journal-bookmark-fill text-white" style="font-size: 20px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
+                                {% else %}
+                                    <i class="bi bi-layout-text-sidebar-reverse text-white" style="font-size: 20px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
+                                {% endif %}
+                            </div>
+                            <div class="ms-2">
+                                <h5 class="text-black m-auto">{{ lateTask.title }}</h5>
+                                <p class="text-secondary m-auto"><small>Due Date: {{ lateTask.deadline }}</small></p>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+
+        </div>
     </div>
 {% endblock %}

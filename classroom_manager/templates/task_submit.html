@@ -76,7 +76,7 @@
     <h5>Submit Task/Assignment</h5>
     <form action="/classroom/task/{{ task.id }}/submit" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        <input type="file" name="files" multiple>
+        <input type="file" name="files" multiple class="filepond">
         <!--<label for="comment">Comment:</label>
         <textarea name="comment"></textarea>-->
         <button type="submit" class="btn btn-success">Submit</button>
