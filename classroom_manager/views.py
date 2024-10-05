@@ -365,7 +365,7 @@ def getEditDeleteTaskById(request: HttpRequest, taskId: int):
             else:
                 acceptLateSubmission = True
 
-            files = request.FILES.getlist('files')
+            files = request.FILES.getlist('file')
             TaskFile.objects.filter(task=task).delete()
             taskfiles = []
             for file in files:
@@ -420,7 +420,7 @@ def createTaskPage(request: HttpRequest, classroomId: int):
         if classroom == None:
             return render(request, '404page.html')
         newTask = ClassroomTask.objects.create(isAssignment = isAssignment, classroom=classroom, title=title, description=description)
-        files = request.FILES.getlist('files')
+        files = request.FILES.getlist('file')
 
         taskfiles = []
         for file in files:
@@ -458,7 +458,7 @@ def submitToTask(request: HttpRequest, taskId: int):
             task = ClassroomTask.objects.filter(id=taskId).first()
             if task == None:
                 return render(request, '404page.html')
-            files = request.FILES.getlist('files')
+            files = request.FILES.getlist('file')
 
             submissionFiles = []
             currentUser = User.objects.filter(id=request.user.id).first()

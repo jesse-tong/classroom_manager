@@ -15,68 +15,100 @@
     <h4>Submission Status</h4>
 
     {% if userSubmission %}
-    <div class="rounded-3 shadow-sm px-3 py-3 border-1">
-        <h5>User Submission:</h5>
-        <a class="btn btn-primary" href="{% url 'submit_task' task.id %}">Add submission</a>
+    <table class="table table-bordered">
         {% if userSubmission %}
-            
-            <p class="mt-3">Student: {{ userSubmission.student.username }}</p>
-            <p class="mt-1 mb-0">Last Submission: {{ userSubmission.lastSubmission }}</p>
-            {% if userSubmission.gpa %}
-                <p class="mt-1 mb-0">GPA: {{ userSubmission.gpa }}</p>
-            {% endif %}
-
-            <h6>Submission Files:</h6>
-            <ul>
-                {% for submissionFile in submissionFiles %}
-                    <li>
-                        <a href="{{ submissionFile.file.url }}">{{ submissionFile.file.name }}</a>
-                        ({{ submissionFile.file.size|filesizeformat }})
-                        <a href="{{ submissionFile.file.url }}" download>Download</a>
-                    </li>
-                {% endfor %}
-            </ul>
+            <tr>
+                <th>Student</th>
+                <td>{{ userSubmission.student.username }}</td>
+            </tr>
+            <tr>
+                <th>Last Submission</th>
+                <td>{{ userSubmission.lastSubmission }}</td>
+            </tr>
+            <tr>
+                <th>Grade</th>
+                {% if userSubmission.gpa %}
+                <td>{{ userSubmission.gpa }}</td>
+                {% else %}
+                <td>Not graded yet</td>
+                {% endif %}
+            </tr>
+            <tr>
+                <th colspan="2">Submission Files</th>
+            </tr>
+ 
+            {% for submissionFile in submissionFiles %}
+            <tr>
+                <th colspan="2">
+                    <a href="{{ submissionFile.file.url }}">{{ submissionFile.file.name }}</a>
+                    ({{ submissionFile.file.size|filesizeformat }})
+                    <a href="{{ submissionFile.file.url }}" class="ms-3" download>Download</a>
+                </th>
+            </tr>
+            {% endfor %}
+            <tr>
+                <th>Actions</th>
+                <td>
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteSubmissionModal">
+                        Delete Submission
+                    </button>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <th>Student</th>
+                <td>N/A</td>
+            </tr>
+            <tr>
+                <th>Last Submission</th>
+                <td>N/A</td>
+            </tr>
+            <tr>
+                <th>Grade</th>
+                <td>No submission yet</td>
+            </tr>
+            <tr>
+                <th colspan="2">Submission Files</th>
+            </tr>
+            <tr>
+                <td colspan="2">No submission yet</td>
+            </tr>
         {% endif %}
-        <button type="button" class="btn btn-danger mt-3" data-bs-toggle="modal" data-bs-target="#deleteSubmissionModal">
-            Delete Submission
-        </button>
-          
-          <!-- Modal -->
-        <div class="modal fade" id="deleteSubmissionModal" tabindex="-1" aria-labelledby="deleteSubmissionModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="deleteSubmissionModalLabel">Delete submission</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        Do you want to delete the submission?
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <form action="{% url 'submit_task' task.id %}" method="POST" class="">
-                            {% csrf_token %}
-                            <input type="hidden" name="_method" value="delete">
-                            <button type="submit" class="btn btn-danger">Delete Submission</button>
-                        </form>
-                    </div>
+            
+    </table>
+
+    <!-- Delete Submission Modal -->
+    <div class="modal fade" id="deleteSubmissionModal" tabindex="-1" aria-labelledby="deleteSubmissionModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="deleteSubmissionModalLabel">Delete submission</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Do you want to delete the submission?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <form action="{% url 'submit_task' task.id %}" method="POST" class="">
+                        {% csrf_token %}
+                        <input type="hidden" name="_method" value="delete">
+                        <button type="submit" class="btn btn-danger">Delete Submission</button>
+                    </form>
                 </div>
             </div>
-        </div>  
-    </div>
+        </div>
+    </div>  
+    
         
     {% endif %}
 
-    <h5>Submission Files</h5>
-    {% for submissionFile in submissionFiles %}
-        <p>File Name: {{ submissionFile.file.name }}</p>
-        <a href="{{ submissionFile.file.url }}" download>Download</a>
-    {% endfor %}
+    
 
-    <h5>Submit Task/Assignment</h5>
-    <form action="/classroom/task/{{ task.id }}/submit" method="POST" enctype="multipart/form-data">
+    <h5 class="mt-4">Submit/Edit Task Submission</h5>
+    <form action="{% url 'submit_task' task.id %}" method="POST" enctype="multipart/form-data" class="dropzone">
         {% csrf_token %}
-        <input type="file" name="files" multiple class="filepond">
+        <input class="fallback" type="file" name="file" id="files" multiple>
         <!--<label for="comment">Comment:</label>
         <textarea name="comment"></textarea>-->
         <button type="submit" class="btn btn-success">Submit</button>

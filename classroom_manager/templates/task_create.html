@@ -11,7 +11,7 @@
     <h4>Create classroom task/assignment</h4>
 
     {% if isTeacher %}
-        <form action="{% url "task_create" classroom.id %}" method="post" enctype="multipart/form-data">
+        <form action="{% url "task_create" classroom.id %}" method="post" enctype="multipart/form-data" class="dropzone">
             {% csrf_token %}
             <div class="mb-3">
                 <label for="title" class="form-label">Title:</label>
@@ -29,9 +29,9 @@
                 <label for="deadline" class="form-label">Deadline:</label>
                 <input type="datetime-local" id="deadline" name="deadline" class="form-control">
             </div>
-            <div class="mb-3">
+            <div class="mb-3 fallback">
                 <label for="files" class="form-label">Files:</label>
-                <input type="file" id="files" name="files" class="filepond" multiple>
+                <input  class="" type="file" name="file" id="files" multiple>
             </div>
             <button type="submit" class="btn btn-primary">Create Task</button>
         </form>
