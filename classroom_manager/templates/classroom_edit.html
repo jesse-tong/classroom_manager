@@ -18,13 +18,13 @@
         </form>
         
         {% if messages %}
-        <ul class="messages">
+        <div class="messages">
             {% for message in messages %}
-            <li{% if message.tags %} class="alert {{ message.tags }}"{% endif %}>{{ message }}</li>
+            <div{% if message.tags %} class="alert {{ message.tags }}"{% endif %}>{{ message }}</div>
             {% endfor %}
-        </ul>
+        </div>
         {% endif %}
-        <h4 class="mt-3">Search users</h4>  
+        <h3 class="mt-3">Search users</h3>  
         <form action="/classroom/edit/{{ classroomId }}/searchUser" method="GET">
             <div class="input-group mb-3">
                 <input type="text" class="form-control" name="searchQuery" placeholder="Search User">
@@ -33,7 +33,7 @@
         </form>
 
         {% if searchResult %}
-            <h3>Search Result</h3>
+            <h4>Search Result</h4>
             <table class="table">
                 <thead>
                     <tr>

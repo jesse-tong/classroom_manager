@@ -550,15 +550,30 @@ def allTaskSchedules(request: HttpRequest):
         taskDates = [task.deadline for task in upcomingTasks] + [task.deadline for task in lateTasks]
         taskDates = list(set(taskDates))
 
+        lastMonth = False; nextMonth = False
+
+        if request.GET.get('lastMonth') != None:
+            now = now - relativedelta.relativedelta(months=1)
+            lastMonth = True
+        elif request.GET.get('nextMonth') != None:
+            now = now + relativedelta.relativedelta(months=1)
+            nextMonth = True
+
         daysWithDeadlines = []
         for taskDate in taskDates:
             if taskDate.month == now.month and taskDate.year == now.year:
                 daysWithDeadlines.append(taskDate.day)
         
+        
+
         firstDay = now.replace(day=1)
         firstDayWeekday = firstDay.weekday()
         numberDaysOfMonth = (firstDay + relativedelta.relativedelta(months=1) - relativedelta.relativedelta(days=1)).day
-        currentDay = now.day
+        
+        if request.GET.get('lastMonth') == None and request.GET.get('nextMonth') == None:
+            currentDay = now.day
+        else:
+            currentDay = None
 
         daysArray = list(range(1, numberDaysOfMonth + 1))
         daysArray = [''] * firstDayWeekday + daysArray
@@ -568,7 +583,7 @@ def allTaskSchedules(request: HttpRequest):
 
         context = {'upcomingTasks': upcomingTasks, 'lateTasks': lateTasks, 
                    'daysArray': daysArray, 'currentDay': currentDay, 'monthString': monthString, 
-                   'yearString': yearString, 'daysWithDeadlines': daysWithDeadlines}    
+                   'yearString': yearString, 'daysWithDeadlines': daysWithDeadlines, 'lastMonth': lastMonth, 'nextMonth': nextMonth}    
         return render(request, 'all_task_schedules.html', context)
     else:
         return render(request, '404page.html')

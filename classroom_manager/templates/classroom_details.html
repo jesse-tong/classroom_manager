@@ -4,11 +4,11 @@
 {% load static %}
     <div class="container">
         {% if messages %}
-            <ul class="messages">
+            <div class="messages">
                 {% for message in messages %}
-                <li{% if message.tags %} class="alert {{ message.tags }}"{% endif %}>{{ message }}</li>
+                <div{% if message.tags %} class="alert {{ message.tags }}"{% endif %}>{{ message }}</div>
                 {% endfor %}
-            </ul>
+            </div>
         {% endif %}
         <div style="width: 100%;" class="mt-3">
             <img style="width: 100%; border-radius: 15px;"  src="{% static classroom.background %}"/ >
@@ -16,9 +16,9 @@
                 <h2 style="text-overflow: ellipsis; overflow: hidden; display: block; whitespace: no-wrap;">{{ classroom.name }}</h2>
             </div>
         </div>
-        <ul class="nav nav-tabs mb-2 mt-3">
+        <ul class="nav nav-tabs mb-2 mt-3 bg-light">
             <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="#">Assignments</a>
+                <a class="nav-link active bg-light" aria-current="page" href="#">Assignments</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'classroom_details_users' classroom.id %}">Students and teachers</a>

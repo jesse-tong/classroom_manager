@@ -8,8 +8,26 @@
             <div class="col-12 col-lg-4">
                 <div class="month">
                     <ul>
-                    <li class="prev" style="list-style-type: none;">&#10094;</li>
-                    <li class="next" style="list-style-type: none;">&#10095;</li>
+                    {% if nextMonth == False %}
+                    <li class="prev" style="list-style-type: none;">
+                        <a href="{% url 'all_task_schedules' %}?lastMonth=true" class="text-white">&#10094;</a>
+                    </li>
+                    {% else %}
+                    <li class="prev" style="list-style-type: none;">
+                        <a href="{% url 'all_task_schedules' %}" class="text-white">&#10094;</a>
+                    </li>
+                    {% endif %}
+
+                    {% if lastMonth == False %}
+                    <li class="next" style="list-style-type: none;">
+                        <a href="{% url 'all_task_schedules' %}?nextMonth=true" class="text-white">&#10095;</a>
+                    </li>
+                    {% else %}
+                    <li class="next" style="list-style-type: none;">
+                        <a href="{% url 'all_task_schedules' %}" class="text-white">&#10095;</a>
+                    </li>
+                    {% endif %}
+
                     <li style="list-style-type: none;">{{ monthString }}
                         <br><span style="font-size:18px">{{ yearString }}</span>
                     </li>

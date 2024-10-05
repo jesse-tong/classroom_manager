@@ -80,3 +80,11 @@
     padding: 5px 9px;
     color: white !important
 }
+
+.carousel-caption {
+  bottom: unset;
+  top: 150px;
+  right: unset;
+  max-width: 600px;
+  text-align: left;
+}

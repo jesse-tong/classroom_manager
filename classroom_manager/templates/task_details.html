@@ -21,13 +21,13 @@
                         <div class="mt-3">
                             <p class="text-secondary mb-0">Deadline: {{ task.deadline }}</p>
                             <p class="text-secondary"><small>Task ID: {{ task.id }} - {{ task.isAssignment|yesno:"Assignment,Classroom Task" }} - 
-                                {{ task.acceptLateSubmission|yesno:"Accepting lates submissions,Not accepting late submission" }}</small>
+                                {{ task.acceptLateSubmission|yesno:"Accepting late submissions,Not accepting late submission" }}</small>
                             </p>
                         </div>
                     </div>
                     
-                    {% if isTeacher %}
-                        <p>All submissions: <a href="{% url 'submissions_by_task_id' task.id %}">Submissions for task</a></p>
+                    {% if isTeacher and task.isAssignment %}
+                        <p>All submissions: <a href="{% url 'submissions_by_task_id' task.id %}">Submissions for assignment</a></p>
                     {% endif %}
                     {% if taskFiles %}
                     <h4>Task Files:</h4>
@@ -48,13 +48,14 @@
                 </div>
             </div>
             <div class="col-12 col-lg-4">
+                {% if task.isAssignment %}
                 <div class="rounded-3 shadow px-3 py-3 border border-light">
                     <h5>User Submission:</h5>
                     {% if task.acceptLateSubmission or isBeforeDue %}
                         {% if userSubmission %}
-                            <a class="btn btn-primary" href="{% url 'submit_task' task.id %}">Add submission</a>
-                        {% else %}
                             <a class="btn btn-primary" href="{% url 'submit_task' task.id %}">Edit submission</a>
+                        {% else %}
+                            <a class="btn btn-primary" href="{% url 'submit_task' task.id %}">Add submission</a>
                         {% endif %}
                     {% endif %}
                     {% if userSubmission %}
@@ -78,14 +79,15 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                        <p>No submission yet</p>
+                        <p class="mt-3">No submission yet</p>
                     {% endif %}
                     
-                    
                 </div>
+                {% endif %}
+
                 {% if isTeacher %}
                 <!--Buttons to edit/delete tasks-->
-                <div class="mt-3 ">
+                <div class="mt-4">
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editTaskModal">
                         Edit task
                     </button>
