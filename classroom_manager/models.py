@@ -75,7 +75,7 @@ class SubmissionFile(models.Model):
     comment = models.CharField(max_length=3000)
     submission = models.ForeignKey(Submission, on_delete=models.CASCADE)
     def __str__(self):
-        return self.fileName
+        return self.file.name
 
 class TaskFile(models.Model):
     file = models.FileField(upload_to=task_directory_path,null=True)

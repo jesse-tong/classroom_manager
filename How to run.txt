@@ -5,3 +5,6 @@ Cách chạy:
 - Cài package: pip -r requirements.txt
 - Chạy: python manage.py runserver 
 Từ các lần sau chỉ cần số 3 với 5 là đủ rồi. Không cần cài Database do cái này dùng SQLite.
+
+Tên đăng nhập superuser: admin
+Mật khẩu superuser: sudomakemeasandwich
