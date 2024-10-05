@@ -1,0 +1,7 @@
+Cách chạy:
+- Từ terminal, vào thư mục chính dùng lệnh cd. Ví dụ nếu ở D:\classroom_manager thì cd d:\classroom_manager
+- Đầu tiên tạo một môi trường ảo (virtual environment) cho Python: python -m venv .venv
+- Vào môi trường ảo: . .venv\Scripts\activate (đối với Windows), . .venv/bin/activate (đối với Linux hoặc MacOS)
+- Cài package: pip -r requirements.txt
+- Chạy: python manage.py runserver 
+Từ các lần sau chỉ cần số 3 với 5 là đủ rồi. Không cần cài Database do cái này dùng SQLite.
