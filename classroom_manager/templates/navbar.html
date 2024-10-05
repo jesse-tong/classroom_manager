@@ -46,7 +46,7 @@
                         <li><a class="dropdown-item" href="/register">Register</a></li>
                         {% endif %}
                         {% if request.user.is_authenticated %}
-                        <li><a class="dropdown-item" href="/user/settings">User Settings</a></li>
+                        <li><a class="dropdown-item" href="/user/edit-profile">Edit profile</a></li>
                         <li><a class="dropdown-item" href="/logout">Logout</a></li>
                         {% endif %}
                     </ul>
@@ -86,24 +86,15 @@
                 </div>
 
                 <div class="col">
-                    <h5>Section</h5>
-                    <ul class="nav flex-column">
-                        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Home</a></li>
-                        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Features</a></li>
-                        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Pricing</a></li>
-                        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">FAQs</a></li>
-                        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">About</a></li>
-                    </ul>
+                    
                 </div>
 
                 <div class="col">
-                    <h5>Section</h5>
+                    <h5>Classroom</h5>
                     <ul class="nav flex-column">
-                        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Home</a></li>
-                        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Features</a></li>
-                        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Pricing</a></li>
-                        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">FAQs</a></li>
-                        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">About</a></li>
+                        <li class="nav-item mb-2"><a href="{% url 'classroom_list' %}" class="nav-link p-0 text-muted">Classrooms</a></li>
+                        <li class="nav-item mb-2"><a href="{% url 'all_task_schedules' %}" class="nav-link p-0 text-muted">Schedules</a></li>
+                        <li class="nav-item mb-2"><a href="/about" class="nav-link p-0 text-muted">About</a></li>
                     </ul>
                 </div>
 

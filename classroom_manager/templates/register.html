@@ -1,6 +1,13 @@
 {% extends 'navbar.html' %}
 
 {% block content %}
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div{% if message.tags %} class="alert {{ message.tags }}"{% endif %}>{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
     <h1>Register</h1>
     <form method="POST" class="needs-validation" action="{% url 'register' %}">
         {% csrf_token %}
@@ -26,6 +33,14 @@
             <input type="password" class="form-control" id="password" name="password" required>
             <div class="invalid-feedback">
                 Please enter a password.
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="reenter-password" class="form-label">Reenter password:</label>
+            <input type="password" class="form-control" id="reenter-password" name="reenterPassword" required>
+            <div class="invalid-feedback">
+                Please reenter your password.
             </div>
         </div>
         

@@ -27,7 +27,7 @@
             <div class="border rounded p-3 mb-3">
                 <div class="d-flex align-items-center">
                     <div class="bg-primary rounded-circle me-2" style="width: 50px; height: 50px; position: relative;">
-                        <i class="bi bi-journal-bookmark-fill text-white" style="font-size: 20px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
+                        <i class="bi bi-bookmarks text-white" style="font-size: 20px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
                     </div>
                     <div class="ms-2">
                         <h5 class="text-black m-auto">{{ teacher.username }}</h5>
@@ -43,7 +43,7 @@
                 <div class="border rounded p-3 mb-3">
                     <div class="d-flex align-items-center">
                         <div class="bg-primary rounded-circle me-2" style="width: 50px; height: 50px; position: relative;">
-                            <i class="bi bi-journal-bookmark-fill text-white" style="font-size: 20px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
+                            <i class="bi bi-bookmarks text-white" style="font-size: 20px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
                         </div>
                         <div class="ms-2">
                             <h5 class="text-black m-auto">{{ student.username }}</h5>
@@ -52,6 +52,18 @@
                     </div>
                 </div>
             {% endfor %}
+            <ul class="pagination mt-2">
+                <li class="page-item"><a class="page-link" href="{% url 'classroom_details_users' classroom.id %}?page={{ currentPage|add:"-1" }}">Previous</a></li>
+                {% for page in pageRange %}
+                    {% if page == currentPage%}
+                    <li class="page-item active"><a class="page-link" href="{% url 'classroom_details_users' classroom.id %}?page={{ page }}">{{ page }}</a></li>
+                    {% else %}
+                    <li class="page-item"><a class="page-link" href="{% url 'classroom_details_users' classroom.id %}?page={{ page }}">{{ page }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                <li class="page-item"><a class="page-link" href="{% url 'classroom_details_users' classroom.id %}?page={{ currentPage|add:"1" }}">Next</a></li>
+            </ul>
+            
             
         </div>
     </div>

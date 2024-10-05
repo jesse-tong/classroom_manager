@@ -28,4 +28,5 @@ urlpatterns = [
     path('classroom/task/<int:taskId>/add-comment', views.addCommentToTask, name="add_comment"),
     path('classroom/comment/<int:commentId>', views.editDeleteComment, name="edit_delete_comment"),
     path('user/schedule', views.allTaskSchedules, name="all_task_schedules"),
+    path('user/edit-profile', views.editProfile, name="edit_profile"),
 ]

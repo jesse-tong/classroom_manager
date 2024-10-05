@@ -34,7 +34,7 @@
                 <form action="{% url 'classroom_details' classroom.id %}" method="post" style="display: inline;">
                     {% csrf_token %}
                     <input type="hidden" name="_method" value="delete">
-                    <button type="submit" class="btn btn-danger">
+                    <button type="submit" class="btn btn-danger" title="You can only delete classrooms if there's no student left">
                         <i class="bi bi-trash me-2"></i><span>Delete</span>
                     </button>
                 </form>

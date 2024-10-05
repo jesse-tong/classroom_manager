@@ -14,6 +14,7 @@ from django.core.serializers import serialize
 from django.urls import reverse
 
 #utils
+from math import ceil
 from datetime import datetime as dt
 from dateutil import relativedelta
 from dateutil.parser import parse as dateparse
@@ -49,7 +50,12 @@ def registerPage(request):
     elif request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
+        reenterPassword = request.POST.get('reenterPassword')
         email = request.POST.get('email')
+
+        if password != reenterPassword:
+            messages.error(request, 'Passwords do not match!')
+            return redirect(reverse('register'))
 
         if User.objects.filter(username=username).exists():
             messages.error(request, 'Username already exists!')
@@ -80,6 +86,35 @@ def loginPage(request):
         else:
             messages.error(request, 'Login failed: Invalid username or password!')
             return redirect(reverse('login'))
+
+@login_required(login_url='login')
+def editProfile(request: HttpRequest):
+    if request.method == 'GET':
+        return render(request, 'edit_profile.html')
+    elif request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        reenterPassword = request.POST.get('reenterPassword')
+
+        if password != reenterPassword:
+            messages.error(request, 'Passwords do not match!')
+            return redirect(reverse('edit_profile'))
+        
+        user = User.objects.filter(id=request.user.id).first()
+        if user == None:
+            messages.error(request, 'User does not exist!')
+            return redirect(reverse('edit_profile'))
+        if username != None and username != '':
+            user.username = username
+        if email != None and email != '':
+            user.email = email
+        if password != None and password != '':
+            user.set_password(password)
+
+        user.save()
+        messages.success(request, 'Edit profile successfully!')
+        return redirect(reverse('edit_profile'))
 
 @login_required(login_url='login')
 def classroomPage(request: HttpRequest):
@@ -247,11 +282,33 @@ def classroomUsers(request: HttpRequest, classroomId):
     if request.method == 'GET':
         classroom = Classroom.objects.filter(id=classroomId).first()
     if classroom != None:
-        students = classroom.students.all()
-        teachers = classroom.teachers.all()
+        try:
+            page = int(request.GET.get('page', 1))
+        except:
+            page = 1
+        
+        if page <= 0:
+            page = 1
+
+        limit = 10
+        studentCount = classroom.students.count()
+        pageLimit = ceil(studentCount / limit)
+
+        if page > pageLimit:
+            page = pageLimit
+        
+        startPagination = max(1, page - 2)
+        endPagination = min(pageLimit, page + 2)
+        
+        pageRange = list(range(startPagination, endPagination + 1))
+
+        students = classroom.students.order_by("id").all()[(page - 1)*limit : page*limit]
+        teachers = classroom.teachers.order_by("id").all()
         isCurrentUserTeacher = isTeacher(request.user.id, classroom.id)
         context = {'classroom': classroom, 'students': students, 'teachers': teachers, 'classroomId': id, 
-                     'isTeacher': isCurrentUserTeacher, 'joinPath': request.get_host() + reverse('join_classroom_by_id', args=[classroomId]) }
+                     'isTeacher': isCurrentUserTeacher, 'joinPath': request.get_host() + reverse('join_classroom_by_id', args=[classroomId]),
+                      'pageRange': pageRange, 'currentPage': page }
+        
         return render(request, 'classroom_details_users.html', context)
     else:
         return render(request, '404page.html')
@@ -541,10 +598,9 @@ def allTaskSchedules(request: HttpRequest):
     if request.method == 'GET':
         now = timezone.now()
         lateTaskScope = now - relativedelta.relativedelta(months=2)
-        upcomingTasks = ClassroomTask.objects.filter((Q(classroom__students__id__contains=request.user.id) 
-                                                      |Q (classroom__teachers__id__contains=request.user.id) )& Q(deadline__gte=now) ).all()
-        lateTasks = ClassroomTask.objects.filter((Q(classroom__students__id__contains=request.user.id) 
-                                                      |Q (classroom__teachers__id__contains=request.user.id) )& Q(deadline__gte=lateTaskScope) & Q(deadline__lte=now)).all()
+
+        upcomingTasks = ClassroomTask.objects.filter((Q(classroom__students__id__contains=request.user.id) )& Q(deadline__gte=now) ).all()
+        lateTasks = ClassroomTask.objects.filter((Q(classroom__students__id__contains=request.user.id) )& Q(deadline__gte=lateTaskScope) & Q(deadline__lte=now)).all()
 
         #Variables for calendar
         taskDates = [task.deadline for task in upcomingTasks] + [task.deadline for task in lateTasks]
@@ -563,8 +619,6 @@ def allTaskSchedules(request: HttpRequest):
         for taskDate in taskDates:
             if taskDate.month == now.month and taskDate.year == now.year:
                 daysWithDeadlines.append(taskDate.day)
-        
-        
 
         firstDay = now.replace(day=1)
         firstDayWeekday = firstDay.weekday()
