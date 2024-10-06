@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{% block title %}Classroom Manager{% endblock %}</title>
+    <title>{% block title %}EduAll{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -26,10 +29,11 @@
 </head>
 <body style="background: url({% static 'background.jpg' %}); background-size: 100% 100%">
     
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+    <nav class="navbar navbar-dark bg-dark navbar-expand-lg px-4" data-bs-theme="dark">
+        
         <a class="navbar-brand" href="/">EduAll</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
+            <i class="bi bi-list" style="font-size: 30px"></i>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
@@ -61,7 +65,49 @@
         </div>
     </nav>
 
-    <div class="container bg-light py-2 rounded-2 mt-4 px-4 py-3">
+    <!-- Classroom list offcanvas -->
+    <div class="offcanvas offcanvas-start w-100" style="max-width: 300px" tabindex="-1" id="offcanvas" data-bs-keyboard="false" data-bs-backdrop="false">
+        <div class="offcanvas-header bg-light">
+            <h6 class="offcanvas-title d-none d-sm-block" id="offcanvas">Menu</h6>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body  bg-light px-0">
+            <ul class="nav nav-underline pe-3 flex-column mb-sm-auto mb-0 align-items-start" id="menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link text-wrap text-dark">
+                        <i class="fs-5 bi-house ms-3"></i><span class="ms-1 d-sm-inline">Home</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'classroom_list' %}"  class="nav-link text-truncate text-dark">
+                        <i class="fs-5 bi-speedometer2 ms-3"></i><span class="ms-1 d-sm-inline">Classroom</span> 
+                    </a>
+                </li>
+                
+                {% for classroom in classroomsAsTeacher %}
+                <li>
+                    <a href="{% url 'classroom_details' classroom.id %}" class="nav-link text-wrap text-dark ms-3">
+                        <i class="fs-5 bi-table "></i><span class="ms-1 d-none d-sm-inline">{{ classroom.name }}</span>
+                    </a>
+                </li>
+                {% endfor %}
+                
+                {% for classroom in classroomsAsStudent %}
+                <li>
+                    <a href="{% url 'classroom_details' classroom.id %}" class="nav-link text-wrap text-dark ms-3">
+                        <i class="fs-5 bi-table"></i><span class="ms-1 d-none d-sm-inline">{{ classroom.name }}</span>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+
+    <div class="container bg-light shadow-sm py-2 rounded-2 mt-4 px-4 py-3">
+        <button class="navbar-toggler position-fixed bg-light bottom-0 start-0 btn ms-2 mb-2"  data-bs-toggle="offcanvas" data-bs-target="#offcanvas" role="button" title="Toggle sidebar" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle sidebar">
+            <i class="bi bi-list px-2" data-bs-toggle="offcanvas" data-bs-target="#offcanvas" style="font-size: 30px"></i>
+        </button>
         {% block content %}
         {% endblock %}
     </div>
@@ -86,10 +132,6 @@
                 </div>
 
                 <div class="col">
-                    
-                </div>
-
-                <div class="col">
                     <h5>Classroom</h5>
                     <ul class="nav flex-column">
                         <li class="nav-item mb-2"><a href="{% url 'classroom_list' %}" class="nav-link p-0 text-muted">Classrooms</a></li>
@@ -97,7 +139,9 @@
                         <li class="nav-item mb-2"><a href="/about" class="nav-link p-0 text-muted">About</a></li>
                     </ul>
                 </div>
+                <div class="col">
 
+                </div>
                 <div class="col">
                     <h5>User</h5>
                     <ul class="nav flex-column">

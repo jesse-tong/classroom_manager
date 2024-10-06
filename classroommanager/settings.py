@@ -26,8 +26,15 @@ SECRET_KEY = 'django-insecure-i^aguneu-oqe48ti!8j&b_aadox+^j76khf@mgu1m!$nb+sp0w
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    'easylib.jesse-tong.work',
+]
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://easylib.jesse-tong.work',
+    'http://easylib.jesse-tong.work',
+]
 
 # Application definition
 
@@ -84,6 +91,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'classroom_manager.context_processor.classroom_processor',
             ],
         },
     },
