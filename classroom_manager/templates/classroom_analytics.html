@@ -1,0 +1,31 @@
+{% extends 'navbar.html' %}
+{% block content %}
+    <div class="container">
+        <h2>Classroom Analytics</h2>
+        <h3>Classroom Information</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ classroom.id }}</td>
+                    <td>{{ classroom.name }}</td>
+                    <td>{{ classroom.description }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <p>Student count: {{ studentCount }}</p>
+        <p>Assignment count: {{ assignmentCount }}</p>
+        <p>Average grade: {{ averageGrade }}</p>
+        <p>Assignment completion: {{ assignmentCompletion }}%</p>
+        {% for gpaGroup in countByGpaGroup %}
+            <p>Number of students with GPA {{ gpaGroup.gpa }}: {{ gpaGroup.count }}</p>
+        {% endfor %}
+        
+    </div>
+{% endblock %}

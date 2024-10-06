@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+
+{% block main %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="card-title">Welcome to Classroom Manager</h1>
+                    <p class="card-text">Classroom Manager helps you manage your classes, assignments, and students efficiently.</p>
+                    <hr>
+                    <h3>Features</h3>
+                    <ul>
+                        <li>Organize your classes</li>
+                        <li>Track assignments and due dates</li>
+                        <li>Communicate with students</li>
+                        <li>Monitor student progress</li>
+                    </ul>
+                    <hr>
+                    <h3>Get Started</h3>
+                    <p>To get started, create a new class or join an existing one.</p>
+                    <a href="{% url 'create_class' %}" class="btn btn-primary">Create a Class</a>
+                    <a href="{% url 'join_class' %}" class="btn btn-secondary">Join a Class</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

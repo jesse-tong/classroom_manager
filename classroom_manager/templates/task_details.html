@@ -103,7 +103,7 @@
                     {% csrf_token %}
                     <div class="form-group mt-2">
                         <label for="comment" class="form-label">Comment:</label>
-                        <textarea id="comment" name="comment" class="form-control"></textarea>
+                        <textarea id="comment" name="comment" class="form-control" style="height: 200px"></textarea>
                     </div>
                     <div class="form-group mt-2">
                         <button type="submit" class="btn btn-primary">Add comment</button>
@@ -119,7 +119,7 @@
                         </div>
                         
                         {% if editingCommentId != comment.id or comment.commenter.id == currentUser.id %}
-                        <div class="border rounded-2 px-3 py-3 mb-0 mt-0 shadow-sm" style="overflow: auto">
+                        <div class="border rounded-2 px-3 py-3 mb-0 mt-0 shadow-sm bg-white" style="overflow: auto; max-height: 200px">
                             <p class="text-black mt-0">{{ comment.comment }}</p>
                         </div>
                         {% endif %}

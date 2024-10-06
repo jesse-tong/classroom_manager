@@ -12,19 +12,20 @@
 
         <div class="d-flex justify-content-between align-items-center">
             <h3>Submission Details</h3>
-            <a class="btn btn-primary" href="{% url "task_details" submission.task.id %}" role="button">Return to task/assignment page</a>
+            <div class="d-flex">
+                <a class="btn btn-primary mt-2" href="{% url "task_details" submission.task.id %}" role="button">Return to task/assignment page</a>
+                <a class="btn btn-primary ms-2 mt-2" href="{% url "submissions_by_task_id" submission.task.id %}" role="button">Return to submission list</a>
+            </div>
+        </div>
+        
+        <div class="mt-2">
+            <p class="text-secondary mb-0"><small>Student username: {{ submission.student.username }}
+                 - Email: {{ submission.student.email }} - ID: {{ submission.student.id }}</small></p>
+            <p class="text-secondary"><small>Task ID: {{ submission.task.id }} - {{ submission.task.title }} - 
+                {{ submission.task.acceptLateSubmission|yesno:"Accepting late submissions,Not accepting late submission" }}</small>
+            </p>
         </div>
         <hr>
-        
-        <h2>Student Information</h2>
-        <p>Student ID: {{ submission.student.id }}</p>
-        <p>Student Username: {{ submission.student.username }}</p>
-        <p>Student Email: {{ submission.student.email }}</p>
-
-        <h2>Task Information</h2>
-        <p>Task ID: {{ submission.task.id }}</p>
-        <p>Task Title: {{ submission.task.title }}</p>
-        
         <div class="row">
             <div class="col-12 {{ isTeacher|yesno:"col-xl-9,col-xl-12"}}">
                 <h4>Last Submission</h4>

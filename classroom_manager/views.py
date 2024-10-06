@@ -18,7 +18,7 @@ from math import ceil
 from datetime import datetime as dt
 from dateutil import relativedelta
 from dateutil.parser import parse as dateparse
-from django.db.models import Count, Sum, F
+from django.db.models import Count, Sum, F, Avg
 from django.utils import timezone
 from . import utils
 import json
@@ -692,5 +692,33 @@ def editDeleteComment(request: HttpRequest, commentId: int):
             comment.comment = newComment
             comment.save()
             return redirect(reverse('task_details', args=[comment.task.id]))
+    else:
+        return render(request, '404page.html')
+    
+@login_required(login_url='login')
+def classroomAnalytics(request: HttpRequest, classroomId: int):
+    if request.method == 'GET':
+        classroom = Classroom.objects.filter(id=classroomId).first()
+        if classroom == None:
+            return render(request, '404page.html')
+        isUserTeacher = isTeacher(request.user.id, classroomId)
+        if not isUserTeacher:
+            return render(request, '403page.html')
+        taskCount = ClassroomTask.objects.filter(classroom=classroom, isAssignment=True).count()
+        studentCount = classroom.students.count()
+        
+        countByGpaGroup = Submission.objects.filter(task__classroom=classroom, task__isAssignment=True).values('gpa').annotate(count=Count('gpa')).order_by('gpa')
+
+        submissionCount = Submission.objects.filter(task__classroom=classroom, task__isAssignment=True).count()
+        assignmentCompletion = submissionCount / (taskCount * studentCount) if taskCount > 0 else 0
+
+        averageGrade = Submission.objects.filter(task__classroom=classroom, task__isAssignment=True).aggregate(average=Avg('gpa'))['average']
+        if averageGrade == None:
+            averageGrade = 0
+
+        context = {'classroom': classroom, 'assignmentCount': taskCount, 'studentCount': studentCount,
+                    'submissionCount': submissionCount, 'averageGrade': averageGrade, 
+                    'assignmentCompletion': assignmentCompletion, 'countByGpaGroup': countByGpaGroup}
+        return render(request, 'classroom_analytics.html', context)
     else:
         return render(request, '404page.html')
