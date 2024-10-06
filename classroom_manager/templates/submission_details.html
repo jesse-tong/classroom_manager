@@ -13,8 +13,8 @@
         <div class="d-flex justify-content-between align-items-center">
             <h3>Submission Details</h3>
             <div class="d-flex">
-                <a class="btn btn-primary mt-2" href="{% url "task_details" submission.task.id %}" role="button">Return to task/assignment page</a>
-                <a class="btn btn-primary ms-2 mt-2" href="{% url "submissions_by_task_id" submission.task.id %}" role="button">Return to submission list</a>
+                <a class="btn btn-secondary mt-2" href="{% url "task_details" submission.task.id %}" role="button">Return to task/assignment page</a>
+                <a class="btn btn-secondary ms-2 mt-2" href="{% url "submissions_by_task_id" submission.task.id %}" role="button">Return to submission list</a>
             </div>
         </div>
         
@@ -58,7 +58,7 @@
                     {% csrf_token %}
                     <label for="gpaEdit">GPA:</label>
                     <input type="number" id="gpaEdit" name="gpa" step="0.01" min="0" max="100" class="form-control">
-                    <button type="submit" class="btn btn-primary mt-2">Submit</button>
+                    <button type="submit" class="btn btn-success mt-2">Submit</button>
                 </form>
             </div>
             {% endif %}

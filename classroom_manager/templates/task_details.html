@@ -27,7 +27,7 @@
                     </div>
                     
                     {% if isTeacher and task.isAssignment %}
-                        <p>All submissions: <a href="{% url 'submissions_by_task_id' task.id %}">Submissions for assignment</a></p>
+                        <a class="btn btn-primary mt-3" role="button" href="{% url 'submissions_by_task_id' task.id %}">Submissions for assignment</a>
                     {% endif %}
                     {% if taskFiles %}
                     <h4>Task Files:</h4>
