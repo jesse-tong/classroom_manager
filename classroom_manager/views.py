@@ -741,3 +741,165 @@ def classroomSubmissionCountByGpa(request: HttpRequest, classroomId: int):
         
         countByGpaGroup = Submission.objects.filter(task__classroom=classroom, task__isAssignment=True).values('gpa').annotate(count=Count('gpa')).order_by('gpa')
         return JsonResponse(status=200, data=list(countByGpaGroup.values('gpa', 'count')), safe=False)
+    
+@login_required(login_url='login')
+def createLearnGroup(request: HttpRequest, classroomId: int):
+    if request.method == 'GET':
+        return render(request, 'learn_group_create.html')
+    elif request.method == 'POST':
+        classroom = Classroom.objects.filter(id=classroomId).first()
+        if not classroom:
+            return render(request, '404page.html')
+        name = request.POST.get('name')
+        description = request.POST.get('description')
+        newLearnGroup = LearnGroup.objects.create(name=name, description=description, classroom=classroom)
+        newLearnGroup.save()
+        return redirect(reverse('learn_group_details', args=[newLearnGroup.id]))
+    
+@login_required(login_url='login')
+def editDeleteLearnGroup(request: HttpRequest, learnGroupId: int):
+    if request.method == 'POST':
+        if request.POST.get('_method') == 'put':
+            learnGroup = LearnGroup.objects.filter(id=learnGroupId).first()
+            if learnGroup == None:
+                return render(request, '404page.html')
+            if not isTeacher(request.user.id, learnGroup.classroom.id):
+                return render(request, '403page.html')
+            
+            name = request.POST.get('name')
+            description = request.POST.get('description')
+            learnGroup.name = name
+            learnGroup.description = description
+            learnGroup.save()
+            return redirect(reverse('learn_group_details', args=[learnGroupId]))
+        else:
+            learnGroup = LearnGroup.objects.filter(id=learnGroupId).first()
+            if not isTeacher(request.user.id, learnGroup.classroom.id):
+                return render(request, '403page.html')
+            
+            if learnGroup == None:
+                return render(request, '404page.html')
+            learnGroup.delete()
+            return redirect(reverse('classroom_details', args=[learnGroup.classroom.id]))
+    else:
+        return render(request, '404page.html')
+    
+@login_required(login_url='login')
+def learnGroupDetails(request: HttpRequest, learnGroupId: int):
+    if request.method == 'GET':
+        learnGroup = LearnGroup.objects.filter(id=learnGroupId).first()
+        if learnGroup == None:
+            return render(request, '404page.html')
+        
+        isUserTeacher = isTeacher(request.user.id, learnGroup.classroom.id)
+        if not isUserTeacher and not learnGroup.members.filter(id=request.user.id).exists():
+            return render(request, '403page.html')
+        
+        members = learnGroup.members.all()
+
+        page = request.GET.get('page', 1)
+        try:
+            page = int(page)
+            if page <= 0:
+                page = 1
+        except:
+            page = 1
+        comments = GroupComment.objects.filter(learnGroup=learnGroup).all()
+        context = {'learnGroup': learnGroup, 'isTeacher': isUserTeacher, 'members': members}
+        return render(request, 'learn_group_details.html', context)
+    else:
+        return render(request, '404page.html')
+
+@login_required(login_url='login')
+def addMemberToLearnGroup(request: HttpRequest, learnGroupId: int, memberId: int):
+    if request.method == 'GET':
+        learnGroup = LearnGroup.objects.filter(id=learnGroupId).first()
+        if learnGroup == None:
+            return render(request, '404page.html')
+        if not isTeacher(request.user.id, learnGroup.classroom.id) and not learnGroup.members.filter(id=request.user.id).exists():
+            return render(request, '403page.html')
+        
+        members = learnGroup.members.all()
+        return render(request, 'learn_group_add_member.html', {'learnGroup': learnGroup, 'members': members})
+    elif request.method == 'POST':
+        learnGroup = LearnGroup.objects.filter(id=learnGroupId).first()
+        if learnGroup == None:
+            return render(request, '404page.html')
+        if not isTeacher(request.user.id, learnGroup.classroom.id):
+            return render(request, '403page.html')
+        
+        user = User.objects.filter(id=memberId).first()
+        if user == None:
+            messages.error(request, 'User does not exist!')
+            return redirect(reverse('learn_group_details', args=[learnGroupId]))
+        learnGroup.members.add(user)
+        return redirect(reverse('learn_group_details', args=[learnGroupId]))
+    else:
+        return render(request, '404page.html')
+    
+@login_required(login_url='login')
+def deleteMemberFromLearnGroup(request: HttpRequest, learnGroupId: int, memberId: int):
+    if request.method == 'POST':
+        learnGroup = LearnGroup.objects.filter(id=learnGroupId).first()
+        if learnGroup == None:
+            return render(request, '404page.html')
+        if not isTeacher(request.user.id, learnGroup.classroom.id):
+            return render(request, '403page.html')
+        
+        user = User.objects.filter(id=memberId).first()
+        if user == None:
+            messages.error(request, 'User does not exist!')
+            return redirect(reverse('learn_group_details', args=[learnGroupId]))
+        learnGroup.members.remove(user)
+        return redirect(reverse('learn_group_details', args=[learnGroupId]))
+    else:
+        return render(request, '404page.html')
+
+@login_required(login_url='login')
+def addCommentToLearnGroup(request: HttpRequest, learnGroupId: int):
+    if request.method == 'POST':
+        learnGroup = LearnGroup.objects.filter(id=learnGroupId).first()
+        if learnGroup == None:
+            return render(request, '404page.html')
+        comment = request.POST.get('comment')
+        if comment == None:
+            messages.error(request, 'Comment cannot be empty!')
+            return redirect(reverse('learn_group_details', args=[learnGroupId]))
+        
+        newComment = GroupComment.objects.create(commenter=request.user, comment=comment, learnGroup=learnGroup)
+        newComment.save()
+
+        files = request.FILES.getlist('file')
+        GroupCommentFile.objects.bulk_create([GroupCommentFile(file=file, comment=newComment) for file in files])
+        return redirect(reverse('learn_group_details', args=[learnGroupId]))
+    else:
+        return render(request, '404page.html')
+    
+@login_required
+def editDeleteCommentLearnGroup(request: HttpRequest, commentId: int):
+    if request.method == 'POST':
+        if request.POST.get('_method') == 'delete':
+            comment = GroupComment.objects.filter(id=commentId).first()
+            if comment == None:
+                return render(request, '404page.html')
+            if not isTeacher(request.user.id, comment.learnGroup.classroom.id) and comment.commenter.id != request.user.id:
+                return render(request, '403page.html')
+            
+            comment.delete()
+            return redirect(reverse('learn_group_details', args=[comment.learnGroup.id]))
+        elif request.POST.get('_method') == 'put':
+            comment = GroupComment.objects.filter(id=commentId).first()
+            if comment == None:
+                return render(request, '404page.html')
+            if not isTeacher(request.user.id, comment.learnGroup.classroom.id):
+                return render(request, '403page.html')
+            
+            newComment = request.POST.get('comment')
+            if newComment == None:
+                messages.error(request, 'Comment cannot be empty!')
+                return redirect(reverse('learn_group_details', args=[comment.learnGroup.id]))
+            comment.comment = newComment
+            comment.save()
+            return redirect(reverse('learn_group_details', args=[comment.learnGroup.id]))
+    else:
+        return render(request, '404page.html')

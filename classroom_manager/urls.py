@@ -29,6 +29,13 @@ urlpatterns = [
     path('classroom/task/<int:taskId>/submissions', views.getSubmissionsByTaskId, name="submissions_by_task_id"),
     path('classroom/task/<int:taskId>/add-comment', views.addCommentToTask, name="add_comment"),
     path('classroom/comment/<int:commentId>', views.editDeleteComment, name="edit_delete_comment"),
+    path('classroom/<int:classroomId>/createGroup', views.createLearnGroup, name="create_learn_group"),
+    path('classroom/group/<int:groupId>/edit', views.editDeleteLearnGroup, name="edit_delete_learn_group"),
+    path('classroom/group/<int:groupId>', views.learnGroupDetails, name="learn_group_details"),
+    path('classroom/group/<int:groupId>/addComment', views.addCommentToLearnGroup, name="add_comment_to_learn_group"),
+    path('classroom/group/comment/<int:commentId>', views.editDeleteCommentLearnGroup, name="edit_delete_group_comment"),
+    path('classroom/group/<int:groupId>/addStudent/<int:studentId>', views.addMemberToLearnGroup, name="add_student_to_learn_group"),
+    path('classroom/group/<int:groupId>/removeStudent/<int:studentId>', views.deleteMemberFromLearnGroup, name="remove_student_from_learn_group"),
     path('user/schedule', views.allTaskSchedules, name="all_task_schedules"),
     path('user/edit-profile', views.editProfile, name="edit_profile"),
 ]

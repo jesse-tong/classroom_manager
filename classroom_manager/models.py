@@ -84,4 +84,22 @@ class TaskFile(models.Model):
     def __str__(self):
         return self.file.name
 
+class LearnGroup(models.Model):
+    students = models.ManyToManyField(User, related_name="learn_group_student")
+    classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE)
+    name = models.CharField(max_length=200)
 
+class GroupComment(models.Model):
+    commenter = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment = models.CharField(max_length=5000)
+    learnGroup = models.ForeignKey(LearnGroup, on_delete=models.CASCADE)
+    creationDate = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return self.comment[:50] + '... from user ' + str(self.commenter.username)
+
+class GroupCommentFile(models.Model):
+    file = models.FileField(upload_to='group_comment_files/',null=True)
+    comment = models.ForeignKey(GroupComment, on_delete=models.CASCADE)
+    def __str__(self):
+        return self.file.name
