@@ -18,6 +18,7 @@
                         {% else %}
                             <h2>Task title not available</h2>
                         {% endif %}
+                        
                         <div class="mt-3">
                             <p class="text-secondary mb-0">Deadline: {{ task.deadline }}</p>
                             <p class="text-secondary"><small>Task ID: {{ task.id }} - {{ task.isAssignment|yesno:"Assignment,Classroom Task" }} - 
@@ -29,6 +30,8 @@
                     {% if isTeacher and task.isAssignment %}
                         <a class="btn btn-primary mt-3" role="button" href="{% url 'submissions_by_task_id' task.id %}">Submissions for assignment</a>
                     {% endif %}
+
+                    <a href="{% url 'classroom_details' task.classroom.id %}" class="btn btn-secondary mt-3 ms-2" role="button">Return to classroom page</a>
                     {% if taskFiles %}
                     <h4>Task Files:</h4>
                     {% endif %}
