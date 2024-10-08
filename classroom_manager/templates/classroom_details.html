@@ -23,16 +23,17 @@
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'classroom_details_users' classroom.id %}">Students and teachers</a>
             </li>
+            {% if isTeacher %}
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'classroom_analytics' classroom.id %}">Analytics</a>
             </li>
+            {% endif %}
         </ul>
         <div>
             <div class="row">
                 <div class="col-12 col-lg-9">
                     <h4 class="mt-2">Classroom Description</h4>
                     <p>{{ classroom.description }}</p>
-
                     
                     {% if isTeacher %}
                     <a href="{% url 'task_create' classroom.id %}" class="btn btn-primary mb-3">Create classroom task/assignment</a>
@@ -49,6 +50,29 @@
                 </div>
             </div>
             <h4 class="mt-2">Assignments</h4>
+            <div>
+                {% for task in assignments %}
+                <a href="{% url 'task_details' task.id %}" class="text-decoration-none">
+                    <div class="border rounded p-3 mb-3">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-primary rounded-circle me-2" style="width: 50px; height: 50px; position: relative;">
+                                {% if task.isAssignment %}
+                                    <i class="bi bi-bookmarks text-white" style="font-size: 20px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
+                                {% else %}
+                                    <i class="bi bi-list-task text-white" style="font-size: 20px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
+                                {% endif %}
+                            </div>
+                            <div class="ms-2">
+                                <h5 class="text-black m-auto">{{ task.title }}</h5>
+                                <p class="text-secondary m-auto"><small>Due Date: {{ task.deadline }}</small></p>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+            <h4 class="mt-2">Tasks</h4>
             <div>
                 {% for task in tasks %}
                 <a href="{% url 'task_details' task.id %}" class="text-decoration-none">

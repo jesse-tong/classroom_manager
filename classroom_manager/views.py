@@ -138,7 +138,9 @@ def classroomPage(request: HttpRequest):
         description = request.POST.get('description')
         if description == None:
             description = ''
-        newClassroom = Classroom.objects.create(name=name, description=description)
+
+        randomImage = get_random_class_image()
+        newClassroom = Classroom.objects.create(name=name, description=description, background=randomImage)
         currentUser = User.objects.get(id=request.user.id)
 
         newClassroom.teachers.add(currentUser)
@@ -318,11 +320,10 @@ def classroomDetailPage(request: HttpRequest, id):
     if request.method == 'GET':
         classroom = Classroom.objects.filter(id=id).first()
         if classroom != None:
-            students = classroom.students.all()
-            teachers = classroom.teachers.all()
-            tasks = ClassroomTask.objects.filter(classroom=classroom).all()
+            tasks = ClassroomTask.objects.filter(classroom=classroom, isAssignment=False).order_by('-deadline').all()
+            assignments = ClassroomTask.objects.filter(classroom=classroom, isAssignment=True).order_by('-deadline').all()
             isCurrentUserTeacher = isTeacher(request.user.id, classroom.id)
-            context = {'classroom': classroom, 'students': students, 'teachers': teachers, 'classroomId': id, 
+            context = {'classroom': classroom, 'classroomId': id, 'assignments': assignments,
                        'tasks': tasks, 'isTeacher': isCurrentUserTeacher, 'joinPath': request.get_host() + reverse('join_classroom_by_id', args=[id]) }
             return render(request, 'classroom_details.html', context)
         else:
@@ -370,9 +371,11 @@ def classroomDetailPage(request: HttpRequest, id):
 def classroomAssignmentPage(request: HttpRequest, id):
     classroom = Classroom.objects.filter(id=id).first()
     if classroom != None:
-        tasks = ClassroomTask.objects.filter(classroom=classroom)
-        isCurrentUserTeacher = isTeacher(request.user.id, classroomId=classroom.id)
-        context = {'classroom': classroom, 'tasks': tasks, 'isTeacher': isCurrentUserTeacher, 'joinPath': request.get_host() + reverse('join_classroom_by_id', args=[classroom.id]) }
+        tasks = ClassroomTask.objects.filter(classroom=classroom, isAssignment=False).order_by('-deadline').all()
+        assignments = ClassroomTask.objects.filter(classroom=classroom, isAssignment=True).order_by('-deadline').all()
+        isCurrentUserTeacher = isTeacher(request.user.id, classroom.id)
+        context = {'classroom': classroom, 'classroomId': id, 'assignments': assignments,
+                    'tasks': tasks, 'isTeacher': isCurrentUserTeacher, 'joinPath': request.get_host() + reverse('join_classroom_by_id', args=[id]) }
         return render(request, 'classroom_details.html', context)
     else:
         return render(request, '404page.html')

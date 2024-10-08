@@ -17,7 +17,7 @@
         </div>
         <ul class="nav nav-tabs mb-2 mt-3 bg-light">
             <li class="nav-item">
-                <a class="nav-link" aria-current="page" href="#">Assignments</a>
+                <a class="nav-link" aria-current="page" href="{% url 'classroom_details' classroom.id %}">Assignments</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'classroom_details_users' classroom.id %}">Students and teachers</a>

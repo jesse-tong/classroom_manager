@@ -17,9 +17,11 @@
             <li class="nav-item">
                 <a class="nav-link active bg-light" aria-current="page" href="#">Students and teachers</a>
             </li>
+            {% if isTeacher %}
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'classroom_analytics' classroom.id %}">Analytics</a>
             </li>
+            {% endif %}
         </ul>
         <div>
             
