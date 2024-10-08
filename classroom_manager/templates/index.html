@@ -1,68 +1,328 @@
 {% extends 'layout.html' %}
-
 {% block main %}
-<div class="container-fluid bg-light p-0">
-    <section class="intro-carousel">
-        <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-indicators">
-            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
-            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
-            </div>
-            {% load static %}
-            <div class="carousel-inner">
-                <div class="carousel-item active">
-                    <img src="{% static 'banners/banner_1.jpg' %}" class="d-block w-100" alt="..." style="max-height: 500px">
-                    <div class="carousel-caption d-none d-md-block">
-                        <h1 class="display-4">Where teaching and learning come together</h1>
-                    </div>
-                </div>
-                <div class="carousel-item active">
-                    <img src="{% static 'banners/banner_1.jpg' %}" class="d-block w-100" alt="..." style="max-height: 500px">
-                    <div class="carousel-caption d-none d-md-block">
-                        <h1>Education is what remains after one has forgotten what one has learned in school.</h1>
-                    </div>
-                </div>
-                <div class="carousel-item active">
-                    <img src="{% static 'banners/banner_1.jpg' %}" class="d-block w-100" alt="..." style="max-height: 500px">
-                    <div class="carousel-caption d-none d-md-block">
-                        <h1>Education is not the filling of a pail, but the lighting of a fire.</h1>
-                    </div>
-                </div>
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
-        </div>
-    </section>
-    <section class="about-section w-100">
-        <div class="container-fluid text-center align-items-center">
-            <div class="d-flex justify-content-center align-items-center">
-                <img src="{% static 'logo.svg' %}" class="img-fluid" style="height: 50px" />
-                <h1 style="transform: translate(0%, 8%);" class="ms-3">EduAll</h1>
-            </div>
-            <h1 style="font-weight: 700; font-size: 80px; max-width: 70%;" class="mt-4 mx-auto">Where teaching and learning come together</h1>
-            <p style="max-width: 70%; font-size: 20px" class="mt-4 mx-auto">EduAll helps educators create engaging learning experiences they can personalize, manage, and measure. 
-                Part of EduAll ecosystem, it empowers educators to enhance their impact and prepare students for the future.</p>
-            <div class="m-auto" style="max-width: 30%">
-                <a href="{% url 'classroom_create' %}" class="btn btn-primary me-3">Create a Class</a>
-                <a href="#" class="btn btn-secondary mt-2" class="">Join a Class</a>
-            </div>
-            <p style="max-width: 70%; font-size: 26px; font-weight: 700" class="mt-4 mx-auto">Why should you choose EduAll</p>
-            
-        </div>
-    </section>
-    <section class="counter-section">
-        <div class="row">
-            <div class="col-sm-6 col-lg-3">
+<div class="container-fluid bg-light px-0">
+{% load static %}
 
+    <!--====== CALL TO ACTION PART START ======-->
+    <section class="call-action-area call-action-one" style="background-image: linear-gradient(130deg, #2E3192, #1BFFFF)">
+        <div class="container">
+            <div class="row align-items-center call-action-content">
+                <div class="col-xl-8 col-lg-8">
+                    <div class="call-action-text">
+                        <h2 class="action-title text-white">
+                        Ready to organize <br />your classroom?
+                        </h2>
+                        <p class="text-lg text-white">
+                        EduAll is here for you, sign up now and start to manage your first classroom.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-4">
+                    <div class="call-action-btn rounded-buttons text-lg-end">
+                        <a href="#" class="btn btn-primary">
+                        Get Started Now
+                        </a>
+                    </div>
+                </div>
             </div>
+            <!-- row -->
         </div>
+        <!-- container -->
     </section>
+    <!--====== CALL TO ACTION ONE PART ENDS ======-->
+    
+   <!--====== SLIDER THREE PART START ======-->
+  
+    <section class="slider-three">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-6">
+            <div class="section-title text-center">
+              <h3 class="title">Friendly & Easy</h3>
+              <p class="text">
+                Stop wasting time and money designing and managing a website
+                that doesn’t get results. Happiness guaranteed!
+              </p>
+            </div>
+            <!-- section title -->
+          </div>
+        </div>
+        <!-- row -->
+  
+        <div class="slider-items-wrapper">
+          <div class="row slider-items-active">
+            <div class="col-lg-4">
+              <div class="single-items-one">
+                <img src="{% static 'images/education.png' %}" alt="Image" />
+              </div>
+              <!-- single-items-one -->
+            </div>
+            <div class="col-lg-4">
+              <div class="single-items-one">
+                <img src="{% static 'images/online.png' %}" alt="Image" />
+              </div>
+              <!-- single-items-one -->
+            </div>
+            <div class="col-lg-4">
+              <div class="single-items-one">
+                <img src="{% static 'images/graduation.png' %}" alt="Image" />
+              </div>
+              <!-- single-items-one -->
+            </div>
+            <div class="col-lg-4">
+              <div class="single-items-one">
+                <img src="{% static 'images/accessible.png' %}" alt="Image" />
+              </div>
+              <!-- single-items-one -->
+            </div>
+          </div>
+          <!-- row -->
+        </div>
+      </div>
+      <!-- container -->
+    </section>
+  
+    <!--====== SLIDER THREE PART ENDS ======-->
+
+
+   <!--====== TESTIMONIAL ONE PART START ======-->
+   
+     <section class="testimonial-one">
+       <!--======  Start Section Title Seven ======-->
+       <div class="section-title-seven">
+         <div class="container">
+           <div class="row">
+             <div class="col-12">
+               <div class="section-title align-center">
+                 <span> Testimonial </span>
+                 <h2 class="fw-bold">What People Says</h2>
+                 <p>
+                   There are many variations of passages of Lorem Ipsum available,
+                   but the majority have suffered alteration in some form.
+                 </p>
+               </div>
+             </div>
+           </div>
+         </div>
+         <!-- container -->
+       </div>
+       <!--====== End Section Title Seven ======-->
+       <div class="container">
+         <div class="testimonial-one-wrapper">
+           <div class="row justify-content-center">
+             <div class="col-md-9 col-lg-12">
+               <div class="row testimonial-one-active">
+                 <div class="col-lg-4">
+                   <div class="single-testimonial text-center">
+                     <div class="testimonial-image">
+                       <img src="https://cdn.ayroui.com/1.0/images/testimonial/author-1.jpg" alt="Author" />
+                       <div class="quote-icon">
+                         <i class="lni lni-quotation"></i>
+                       </div>
+                     </div>
+                     <div class="testimonial-content">
+                       <p class="text">
+                         Stop wasting time and money designing and managing a
+                         website that doesn’t get results. Happiness lorem guaranteed!
+                       </p>
+                       <h6 class="author-name">Isabela Moreira</h6>
+                       <span class="sub-title">CEO, GrayGrids</span>
+                     </div>
+                   </div>
+                   <!-- single testimonial -->
+                 </div>
+                 <div class="col-lg-4">
+                   <div class="single-testimonial text-center">
+                     <div class="testimonial-image">
+                       <img src="https://cdn.ayroui.com/1.0/images/testimonial/author-2.jpg" alt="Author" />
+                       <div class="quote-icon">
+                         <i class="lni lni-quotation"></i>
+                       </div>
+                     </div>
+                     <div class="testimonial-content">
+                       <p class="text">
+                         Stop wasting time and money designing and managing a
+                         website that doesn’t get results. Happiness lorem guaranteed!
+                       </p>
+                       <h6 class="author-name">Fajar Siddiq</h6>
+                       <span class="sub-title">Founder, MakerFlix</span>
+                     </div>
+                   </div>
+                   <!-- single testimonial -->
+                 </div>
+                 <div class="col-lg-4">
+                   <div class="single-testimonial text-center">
+                     <div class="testimonial-image">
+                       <img src="https://cdn.ayroui.com/1.0/images/testimonial/author-3.jpg" alt="Author" />
+                       <div class="quote-icon">
+                         <i class="lni lni-quotation"></i>
+                       </div>
+                     </div>
+                     <div class="testimonial-content">
+                       <p class="text">
+                         Stop wasting time and money designing and managing a
+                         website that doesn’t get results. Happiness lorem guaranteed!
+                       </p>
+                       <h6 class="author-name">Fiona</h6>
+                       <span class="sub-title">Lead Designer, UIdeck</span>
+                     </div>
+                   </div>
+                   <!-- single testimonial -->
+                 </div>
+                 <div class="col-lg-4">
+                   <div class="single-testimonial text-center">
+                     <div class="testimonial-image">
+                       <img src="https://cdn.ayroui.com/1.0/images/testimonial/author-4.jpg" alt="Author" />
+                       <div class="quote-icon">
+                         <i class="lni lni-quotation"></i>
+                       </div>
+                     </div>
+                     <div class="testimonial-content">
+                       <p class="text">
+                         Stop wasting time and money designing and managing a
+                         website that doesn’t get results. Happiness lorem guaranteed!
+                       </p>
+                       <h6 class="author-name">Elon Musk</h6>
+                       <span class="sub-title">CEO, SpaceX</span>
+                     </div>
+                   </div>
+                   <!-- single testimonial -->
+                 </div>
+               </div>
+               <!-- row -->
+             </div>
+           </div>
+         </div>
+       </div>
+       <!-- container -->
+     </section>
+   
+     <!--====== TESTIMONIAL ONE PART ENDS ======-->
+   
+    <!--====== ABOUT ONE PART START ======-->
+    <section class="about-area about-one">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="about-title text-center">
+                        <h2 class="title fw-bold">Why Choose Us</h2>
+                    </div>
+                </div>
+            </div>
+        <!-- row -->
+            <div class="row justify-content-center">
+                <div class="col-md-4 col-sm-8">
+                    <div class="single-about-items">
+                        <div class="items-icon">
+                        <i class="lni lni-bullhorn"></i>
+                        </div>
+                        <div class="items-content">
+                        <h4 class="items-title">Digital Marketing</h4>
+                        <p class="text">
+                            Short description for the ones who look for something new
+                        </p>
+                        </div>
+                    </div>
+                    <!-- single about items -->
+                </div>
+                <div class="col-md-4 col-sm-8">
+                    <div class="single-about-items">
+                        <div class="items-icon">
+                        <i class="lni lni-investment"></i>
+                        </div>
+                        <div class="items-content">
+                        <h4 class="items-title">Consulting Services</h4>
+                        <p class="text">
+                            Short description for the ones who look for something new
+                        </p>
+                        </div>
+                    </div>
+                    <!-- single about items -->
+                </div>
+                <div class="col-md-4 col-sm-8">
+                    <div class="single-about-items">
+                        <div class="items-icon">
+                        <i class="lni lni-handshake"></i>
+                        </div>
+                        <div class="items-content">
+                        <h4 class="items-title">Business Solutions</h4>
+                        <p class="text">
+                            Short description for the ones who look for something new
+                        </p>
+                        </div>
+                    </div>
+                    <!-- single about items -->
+                </div>
+            </div>
+        <!-- row -->
+        </div>
+        <!-- container -->
+    </section>
+    <!--====== ABOUT ONE PART ENDS ======-->
+    
+
 </div>
+{% endblock %}
+
+{% block script %}
+
+    //======== tiny slider for slider-items-active
+    tns({
+         autoplay: true,
+         autoplayButtonOutput: false,
+         mouseDrag: true,
+         gutter: 0,
+         container: ".slider-items-active",
+         center: false,
+         nav: true,
+         navPosition: "bottom",
+         controls: false,
+         speed: 400,
+         controlsText: [
+            '<i class="lni lni-arrow-left-circle"></i>',
+            '<i class="lni lni-arrow-right-circle"></i>',
+         ],
+         responsive: {
+            0: {
+               items: 1,
+            },
+
+            768: {
+               items: 2,
+            },
+            992: {
+               items: 3,
+            },
+        },
+    });
+
+    //======== tiny slider for testimonial-one
+    tns({
+         autoplay: true,
+         autoplayButtonOutput: false,
+         mouseDrag: true,
+         gutter: 0,
+         container: ".testimonial-one-active",
+         center: true,
+         nav: true,
+         controls: false,
+         speed: 400,
+         controlsText: [
+           '<i class="lni lni-arrow-left-circle"></i>',
+           '<i class="lni lni-arrow-right-circle"></i>',
+         ],
+         responsive: {
+           0: {
+             items: 1,
+           },
+   
+           992: {
+             items: 2,
+           },
+           1200: {
+             items: 3,
+           },
+        },
+    });
+
 {% endblock %}
