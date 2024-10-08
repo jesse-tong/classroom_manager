@@ -12,8 +12,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
-    <!--====== Tiny Slider Css ======-->
-    <link rel="stylesheet" href="https://cdn.ayroui.com/1.0/css/tiny-slider.css" />
+    
     <!-- LineIcons -->
     <link rel="stylesheet" href="https://cdn.lineicons.com/4.0/lineicons.css" />
     <!-- jQuery -->
@@ -24,8 +23,10 @@
     <script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.5.4/js/plugins/buffer.min.js" type="text/javascript"></script>
     <script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.5.4/js/plugins/filetype.min.js" type="text/javascript"></script>
     <script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.5.0/js/fileinput.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
     {% load static %}
+    <!--====== Tiny Slider Css ======-->
+    <link rel="stylesheet" href="{% static 'css/tiny_slider.css' %}" />
     <link href="{% static 'mdb5-free-standard/css/mdb.min.css' %}" rel="stylesheet" type="text/css"/>
     <link href="{% static 'calendar.css' %}" rel="stylesheet" type="text/css"/>
     <link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css"/>
@@ -83,7 +84,7 @@
                 </li>
                 <li>
                     <a href="{% url 'classroom_list' %}"  class="nav-link text-truncate text-dark">
-                        <i class="fs-5 bi-speedometer2 ms-3"></i><span class="ms-1 d-sm-inline">Classroom</span> 
+                        <i class="fs-5 bi-speedometer2 ms-3"></i><span class="ms-1 d-sm-inline">Classrooms</span> 
                     </a>
                 </li>
                 
@@ -112,7 +113,7 @@
     
     <div class="bg-light">
         <div class="container">
-            <footer class="row row-cols-5 py-5 mt-5 mb-0 border-top">
+            <footer class="row row-cols-5 py-5 mb-0 border-top">
                 <div class="col">
                     <a href="/" class="d-flex align-items-center mb-3 link-dark text-decoration-none">
                         <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap">
@@ -153,7 +154,7 @@
         </div>
     </div>
     <!--====== Tiny Slider js ======-->
-    <script src="https://cdn.ayroui.com/1.0/js/tiny-slider.js"></script>
+    <script src="{% static 'js/tiny-slider.js' %}"></script>
     <script>
         $( document ).ready(function() {
             $("#files").fileinput();

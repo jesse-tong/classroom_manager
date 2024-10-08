@@ -710,9 +710,11 @@ def classroomAnalytics(request: HttpRequest, classroomId: int):
         countByGpaGroup = Submission.objects.filter(task__classroom=classroom, task__isAssignment=True).values('gpa').annotate(count=Count('gpa')).order_by('gpa')
 
         submissionCount = Submission.objects.filter(task__classroom=classroom, task__isAssignment=True).count()
-        assignmentCompletion = submissionCount / (taskCount * studentCount) if taskCount > 0 else 0
+        assignmentCompletion = submissionCount / (taskCount * studentCount) * 100 if taskCount > 0 else 0
+        assignmentCompletion = round(assignmentCompletion, 2)
 
         averageGrade = Submission.objects.filter(task__classroom=classroom, task__isAssignment=True).aggregate(average=Avg('gpa'))['average']
+        averageGrade = round(averageGrade, 2)
         if averageGrade == None:
             averageGrade = 0
 
@@ -722,3 +724,17 @@ def classroomAnalytics(request: HttpRequest, classroomId: int):
         return render(request, 'classroom_analytics.html', context)
     else:
         return render(request, '404page.html')
+    
+@login_required(login_url='login')
+@csrf_exempt
+def classroomSubmissionCountByGpa(request: HttpRequest, classroomId: int):
+    if request.method == 'GET':
+        classroom = Classroom.objects.filter(id=classroomId).first()
+        if classroom == None:
+            return JsonResponse(status=404, data={'status': 'Not Found'})
+        isUserTeacher = isTeacher(request.user.id, classroomId)
+        if not isUserTeacher:
+            return JsonResponse(status=403, data={'status': 'Forbidden'})
+        
+        countByGpaGroup = Submission.objects.filter(task__classroom=classroom, task__isAssignment=True).values('gpa').annotate(count=Count('gpa')).order_by('gpa')
+        return JsonResponse(status=200, data=list(countByGpaGroup.values('gpa', 'count')), safe=False)
