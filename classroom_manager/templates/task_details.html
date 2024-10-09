@@ -121,7 +121,7 @@
                             <small class="text-secondary ms-3">{{ comment.creationDate }}</small></p>
                         </div>
                         
-                        {% if editingCommentId != comment.id or comment.commenter.id == currentUser.id %}
+                        {% if editingCommentId != comment.id %}
                         <div class="border rounded-2 px-3 py-3 mb-0 mt-0 shadow-sm bg-white" style="overflow: auto; max-height: 200px">
                             <p class="text-black mt-0">{{ comment.comment }}</p>
                         </div>
@@ -131,8 +131,13 @@
                         <form action="{% url 'edit_delete_comment' comment.id %}" method="post">
                             {% csrf_token %}
                             <input type="hidden" name="_method" value="put" />
-                            <textarea name="comment" value="{{ comment.comment }}" ></textarea>
-                            <button type="submit" class="btn btn-primary">Save edit</button>
+                            <div class="form-group mt-2">
+                                <label for="comment" class="form-label">Comment:</label>
+                                <textarea id="comment" name="comment" class="form-control" style="height: 200px">{{ comment.comment }}</textarea>
+                            </div>
+                            <div class="form-group mt-2">
+                                <button type="submit" class="btn btn-primary">Add comment</button>
+                            </div>
                         </form>
                         {% endif %}
                         

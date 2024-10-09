@@ -1,0 +1,125 @@
+{% extends 'navbar.html' %}
+
+{% block content %}
+    <div class="container">
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div{% if message.tags %} class="alert {{ message.tags }}"{% endif %}>{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="d-flex flex-row justify-content-between">
+            <h2>Edit Group</h2>
+            <div>
+                <a href="{% url 'classroom_details' group.classroom.id %}" class="btn btn-secondary">Back to classroom</a>
+                <a href="{% url 'learn_group_details' group.id %}" class="btn btn-secondary">Back to group</a>
+            </div>
+        </div>
+        
+        <form action="{% url 'edit_delete_learn_group' group.id %}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="_method" value="put">
+            <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control" id="name" name="name" value="{{ classroom.name }}" />
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+        
+        
+        <h3 class="mt-3">Add user to learn group</h3>  
+        <form action="{% url 'search_in_group_edit' group.id %}" method="GET">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" name="searchQuery" placeholder="Search User">
+                <button class="btn btn-primary" type="submit">Search</button>
+            </div>
+        </form>
+
+        {% if searchResult %}
+            <h4>Search Result</h4>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Add as member</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in searchResult %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.email }}</td>
+                            
+                            <td>
+                                <form action="{% url 'add_student_to_learn_group' group.id user.id %}" method="POST">
+                                    {% csrf_token %}
+                                    <button class="btn btn-success" type="submit">Add as member</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+
+        <h3>Members</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Remove</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in members %}
+                    <tr>
+                        <td>{{ student.id }}</td>
+                        <td>{{ student.username }}</td>
+                        <td>{{ student.email }}</td>
+                        <td>
+                            <form action="{% url 'remove_student_from_learn_group' group.id student.id %}" method="POST">
+                                {% csrf_token %}
+                                <button class="btn btn-danger" type="submit">Remove member</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <h3>Delete group</h3>
+        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteGroupModal">
+            Delete group
+        </button>
+    </div>
+
+    <!-- Delete Group Modal -->
+    <div class="modal fade" id="deleteGroupModal" tabindex="-1" aria-labelledby="deleteGroupModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="deleteGroupModalLabel">Delete group {{ group.name }}</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Do you want to delete the group?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <form id="deleteForm" action="{% url 'edit_delete_learn_group' group.id %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="_method" value="delete">
+                        <button type="submit" class="btn btn-danger">Delete group</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>  
+{% endblock %}

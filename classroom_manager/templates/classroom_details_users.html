@@ -24,7 +24,9 @@
             {% endif %}
         </ul>
         <div>
-            
+            <button type="button" class="btn btn-secondary mt-2 mb-3" data-bs-toggle="modal" data-bs-target="#createLearnGroupModal">
+                Create group
+            </button>
 
             <h5>Teachers</h5>
             
@@ -69,7 +71,61 @@
                 <li class="page-item"><a class="page-link" href="{% url 'classroom_details_users' classroom.id %}?page={{ currentPage|add:"1" }}">Next</a></li>
             </ul>
             
+            {% if isTeacher %}
+            <h5>Classroom groups</h5>
             
+            {% for group in groups %}
+            <div class="border rounded p-3 mb-3">
+                <div class="d-flex align-items-center">
+                    <div class="bg-primary rounded-circle me-2" style="width: 50px; height: 50px; position: relative;">
+                        <i class="bi bi-people text-white" style="font-size: 20px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
+                    </div>
+                    <div class="ms-2">
+                        <a href="{% url 'learn_group_details' group.id %}" class="text-black text-decoration-none"><h5 class="text-black m-auto">{{ group.name }}</h5></a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            {% for group in groupsJoined %}
+            <div class="border rounded p-3 mb-3">
+                <div class="d-flex align-items-center">
+                    <div class="bg-primary rounded-circle me-2" style="width: 50px; height: 50px; position: relative;">
+                        <i class="bi bi-people text-white" style="font-size: 20px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
+                    </div>
+                    <div class="ms-2">
+                        <a href="{% url 'learn_group_details' group.id %}" class="text-black text-decoration-none"><h5 class="text-black m-auto">{{ group.name }}</h5></a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
         </div>
     </div>
+
+    <!--Create group modal -->
+    <div class="modal fade" id="createLearnGroupModal" tabindex="-1" aria-labelledby="createLearnGroupModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="deleteSubmissionModalLabel">Create group</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{% url 'create_learn_group' classroom.id %}" method="POST">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="form-group mt-2">
+                            <label for="name" class="form-label">Group name:</label>
+                            <input type="text" id="name" name="name" class="form-control">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Create group</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div> 
 {% endblock %}

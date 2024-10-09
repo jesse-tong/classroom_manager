@@ -70,6 +70,9 @@ def submission_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/submission_<id>/<filename>
     return "submission_{0}/{1}".format(instance.submission.id, filename)
 
+def group_directory_path(instance, filename):
+    return "group_{0}/{1}".format(instance.learnGroup.id, filename)
+
 class SubmissionFile(models.Model):
     file = models.FileField(upload_to=submission_directory_path, null=True)
     comment = models.CharField(max_length=3000)
@@ -94,12 +97,12 @@ class GroupComment(models.Model):
     comment = models.CharField(max_length=5000)
     learnGroup = models.ForeignKey(LearnGroup, on_delete=models.CASCADE)
     creationDate = models.DateTimeField(auto_now_add=True)
-    
+    file = models.FileField(upload_to='group_comment_files' ,null=True)
     def __str__(self):
         return self.comment[:50] + '... from user ' + str(self.commenter.username)
 
 class GroupCommentFile(models.Model):
-    file = models.FileField(upload_to='group_comment_files/',null=True)
+    file = models.FileField(upload_to=group_directory_path, null=True)
     comment = models.ForeignKey(GroupComment, on_delete=models.CASCADE)
     def __str__(self):
         return self.file.name
