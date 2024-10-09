@@ -39,4 +39,5 @@ urlpatterns = [
     path('classroom/group/<int:groupId>/removeStudent/<int:memberId>', views.deleteMemberFromLearnGroup, name="remove_student_from_learn_group"),
     path('user/schedule', views.allTaskSchedules, name="all_task_schedules"),
     path('user/edit-profile', views.editProfile, name="edit_profile"),
+    path('user/joinedGroups', views.joinedGroupPage, name="joined_group_list"),
 ]

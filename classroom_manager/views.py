@@ -757,8 +757,13 @@ def createLearnGroup(request: HttpRequest, classroomId: int):
         classroom = Classroom.objects.filter(id=classroomId).first()
         if not classroom:
             return render(request, '404page.html')
+        
         name = request.POST.get('name')
         newLearnGroup = LearnGroup.objects.create(name=name, classroom=classroom)
+        if not isTeacher(request.user.id, classroomId):
+            #If user is not a teacher, then add the user to the learning group
+            newLearnGroup.students.add(request.user)
+
         newLearnGroup.save()
         return redirect(reverse('learn_group_details', args=[newLearnGroup.id]))
     
@@ -769,7 +774,7 @@ def editDeleteLearnGroup(request: HttpRequest, groupId: int):
             learnGroup = LearnGroup.objects.filter(id=groupId).first()
             if learnGroup == None:
                 return render(request, '404page.html')
-            if not isTeacher(request.user.id, learnGroup.classroom.id):
+            if not isTeacher(request.user.id, learnGroup.classroom.id) and not learnGroup.students.filter(id=request.user.id).exists():
                 return render(request, '403page.html')
             
             name = request.POST.get('name')
@@ -846,7 +851,7 @@ def addMemberToLearnGroup(request: HttpRequest, groupId: int, memberId: int):
         learnGroup = LearnGroup.objects.filter(id=learnGroupId).first()
         if learnGroup == None:
             return render(request, '404page.html')
-        if not isTeacher(request.user.id, learnGroup.classroom.id):
+        if not isTeacher(request.user.id, learnGroup.classroom.id)  and not learnGroup.students.filter(id=request.user.id).exists():
             return render(request, '403page.html')
         
         user = User.objects.filter(id=memberId).first()
@@ -859,20 +864,26 @@ def addMemberToLearnGroup(request: HttpRequest, groupId: int, memberId: int):
         return render(request, '404page.html')
     
 @login_required(login_url='login')
-def deleteMemberFromLearnGroup(request: HttpRequest, learnGroupId: int, memberId: int):
+def deleteMemberFromLearnGroup(request: HttpRequest, groupId: int, memberId: int):
     if request.method == 'POST':
-        learnGroup = LearnGroup.objects.filter(id=learnGroupId).first()
+        learnGroup = LearnGroup.objects.filter(id=groupId).first()
         if learnGroup == None:
             return render(request, '404page.html')
-        if not isTeacher(request.user.id, learnGroup.classroom.id):
-            return render(request, '403page.html')
+        '''if not isTeacher(request.user.id, learnGroup.classroom.id):
+            return render(request, '403page.html')'''
         
         user = User.objects.filter(id=memberId).first()
         if user == None:
             messages.error(request, 'User does not exist!')
-            return redirect(reverse('search_in_group_edit', args=[learnGroupId]))
+            return redirect(reverse('search_in_group_edit', args=[groupId]))
         learnGroup.students.remove(user)
-        return redirect(reverse('search_in_group_edit', args=[learnGroupId]))
+
+        #Delete group if no student left
+        if learnGroup.students.count() == 0:
+            learnGroup.delete()
+            return redirect(reverse('classroom_details', args=[learnGroup.classroom.id]))
+        
+        return redirect(reverse('search_in_group_edit', args=[groupId]))
     else:
         return render(request, '404page.html')
 
@@ -910,8 +921,8 @@ def editDeleteCommentLearnGroup(request: HttpRequest, commentId: int):
             comment = GroupComment.objects.filter(id=commentId).first()
             if comment == None:
                 return render(request, '404page.html')
-            if not isTeacher(request.user.id, comment.learnGroup.classroom.id):
-                return render(request, '403page.html')
+            '''if not isTeacher(request.user.id, comment.learnGroup.classroom.id):
+                return render(request, '403page.html')'''
             
             newComment = request.POST.get('comment')
             if newComment == None:
@@ -943,3 +954,12 @@ def searchInGroupEdit(request: HttpRequest, groupId: int):
     context={'searchResult': searchResult, 'group': group, 'groupId': groupId, 
              'members': members}
     return render(request, 'group_edit.html', context)
+
+@login_required(login_url='login')
+def joinedGroupPage(request: HttpRequest):
+    if request.method == 'GET':
+        groupsJoined = LearnGroup.objects.filter(students__id__contains=request.user.id).all()
+        context = {'groups': groupsJoined}
+        return render(request, 'joined_groups.html', context)
+    else:
+        return render(request, '404page.html')
