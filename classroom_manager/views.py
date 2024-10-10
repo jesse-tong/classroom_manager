@@ -312,7 +312,7 @@ def classroomUsers(request: HttpRequest, classroomId):
         isCurrentUserTeacher = isTeacher(request.user.id, classroom.id)
         context = {'classroom': classroom, 'students': students, 'teachers': teachers, 'classroomId': id, 
                      'isTeacher': isCurrentUserTeacher, 'joinPath': request.get_host() + reverse('join_classroom_by_id', args=[classroomId]),
-                      'pageRange': pageRange, 'currentPage': page, 'groups': groups, 'groupsJoined': groupsJoined }
+                      'pageRange': pageRange, 'currentPage': page, 'groups': groups, 'groupsJoined': groupsJoined, 'currentClassroom': classroom }
         
         return render(request, 'classroom_details_users.html', context)
     else:
@@ -327,7 +327,8 @@ def classroomDetailPage(request: HttpRequest, id):
             assignments = ClassroomTask.objects.filter(classroom=classroom, isAssignment=True).order_by('-deadline').all()
             isCurrentUserTeacher = isTeacher(request.user.id, classroom.id)
             context = {'classroom': classroom, 'classroomId': id, 'assignments': assignments,
-                       'tasks': tasks, 'isTeacher': isCurrentUserTeacher, 'joinPath': request.get_host() + reverse('join_classroom_by_id', args=[id]) }
+                       'tasks': tasks, 'isTeacher': isCurrentUserTeacher, 'joinPath': request.get_host() + reverse('join_classroom_by_id', args=[id]),
+                         'currentClassroom': classroom }
             return render(request, 'classroom_details.html', context)
         else:
             return render(request, '404page.html')
@@ -378,7 +379,8 @@ def classroomAssignmentPage(request: HttpRequest, id):
         assignments = ClassroomTask.objects.filter(classroom=classroom, isAssignment=True).order_by('-deadline').all()
         isCurrentUserTeacher = isTeacher(request.user.id, classroom.id)
         context = {'classroom': classroom, 'classroomId': id, 'assignments': assignments,
-                    'tasks': tasks, 'isTeacher': isCurrentUserTeacher, 'joinPath': request.get_host() + reverse('join_classroom_by_id', args=[id]) }
+                    'tasks': tasks, 'isTeacher': isCurrentUserTeacher, 'joinPath': request.get_host() + reverse('join_classroom_by_id', args=[id])
+                     ,'currentClassroom': classroom }
         return render(request, 'classroom_details.html', context)
     else:
         return render(request, '404page.html')

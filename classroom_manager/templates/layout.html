@@ -42,7 +42,7 @@
             <i class="bi bi-list" style="font-size: 30px"></i>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
+            <ul class="navbar-nav  ms-auto">
                 <li class="nav-item">
                     <a class="nav-link text-center" href="/classroom">
                         <div>
@@ -94,38 +94,39 @@
     <!-- Classroom list offcanvas -->
     <div class="offcanvas offcanvas-start w-100" style="max-width: 300px" tabindex="-1" id="offcanvas" data-bs-keyboard="false" data-bs-backdrop="false">
         <div class="offcanvas-header bg-light">
-            <h6 class="offcanvas-title d-none d-sm-block" id="offcanvas">Menu</h6>
+            <h6 class="offcanvas-title d-none d-sm-block" id="offcanvas">Sidebar</h6>
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body  bg-light px-0">
-            <ul class="nav nav-underline pe-3 flex-column mb-sm-auto mb-0 align-items-start" id="menu">
-                <li class="nav-item">
-                    <a href="#" class="nav-link text-wrap text-dark">
-                        <i class="fs-5 bi-house ms-3"></i><span class="ms-1 d-sm-inline">Home</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url 'classroom_list' %}"  class="nav-link text-truncate text-dark">
-                        <i class="fs-5 bi-speedometer2 ms-3"></i><span class="ms-1 d-sm-inline">Classrooms</span> 
-                    </a>
-                </li>
+            <div class="list-group list-group-flush mx-3 mt-4">
+                <a href="{% url 'classroom_list' %}"  class="list-group-item list-group-item-action py-2 ripple">
+                    <i class="fas fa-chalkboard-user"></i><span class="ms-1 d-none d-sm-inline">Classrooms</span> 
+                </a>
                 
                 {% for classroom in classroomsAsTeacher %}
-                <li>
-                    <a href="{% url 'classroom_details' classroom.id %}" class="nav-link text-wrap text-dark ms-3">
-                        <i class="fs-5 bi-table "></i><span class="ms-1 d-none d-sm-inline">{{ classroom.name }}</span>
+                    {% if currentClassroom and classroom.id == currentClassroom.id %}
+                    <a href="{% url 'classroom_details' classroom.id %}" class="list-group-item list-group-item-action py-2 ripple active rounded-3">
+                        <i class="fs-5 bi-table"></i><span class="ms-1 d-none d-sm-inline">{{ classroom.name }}</span>
                     </a>
-                </li>
+                    {% else %}
+                    <a href="{% url 'classroom_details' classroom.id %}" class="list-group-item list-group-item-action py-2 ripple">
+                        <i class="fs-5 bi-table"></i><span class="ms-1 d-none d-sm-inline">{{ classroom.name }}</span>
+                    </a>
+                    {% endif %}
                 {% endfor %}
                 
                 {% for classroom in classroomsAsStudent %}
-                <li>
-                    <a href="{% url 'classroom_details' classroom.id %}" class="nav-link text-wrap text-dark ms-3">
+                    {% if currentClassroom and classroom.id == currentClassroom.id %}
+                    <a href="{% url 'classroom_details' classroom.id %}" class="list-group-item list-group-item-action py-2 ripple active rounded-3">
                         <i class="fs-5 bi-table"></i><span class="ms-1 d-none d-sm-inline">{{ classroom.name }}</span>
                     </a>
-                </li>
+                    {% else %}
+                    <a href="{% url 'classroom_details' classroom.id %}" class="list-group-item list-group-item-action py-2 ripple">
+                        <i class="fs-5 bi-table"></i><span class="ms-1 d-none d-sm-inline">{{ classroom.name }}</span>
+                    </a>
+                    {% endif %}
                 {% endfor %}
-            </ul>
+            </div>
         </div>
     </div>
 

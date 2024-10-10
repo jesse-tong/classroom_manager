@@ -2,9 +2,11 @@
 
 {% block main %}
 <div class="container bg-light shadow-sm py-2 rounded-2 mt-4 px-4 py-3 mb-5">
+    {% if request.user.is_authenticated %}
     <button class="navbar-toggler position-fixed bg-light bottom-0 start-0 btn ms-2 mb-2 px-2"  data-bs-toggle="offcanvas" data-bs-target="#offcanvas" role="button" title="Toggle sidebar" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle sidebar">
         <i class="fa-solid fa-school" data-bs-toggle="offcanvas" data-bs-target="#offcanvas" style="font-size: 30px"></i>
     </button>
+    {% endif %}
     
     {% block content %}
     {% endblock %}
