@@ -24,12 +24,14 @@
     <script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.5.4/js/plugins/filetype.min.js" type="text/javascript"></script>
     <script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.5.0/js/fileinput.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+
     {% load static %}
     <!--====== Tiny Slider Css ======-->
     <link rel="stylesheet" href="{% static 'css/tiny_slider.css' %}" />
     <link href="{% static 'mdb5-free-standard/css/mdb.min.css' %}" rel="stylesheet" type="text/css"/>
     <link href="{% static 'calendar.css' %}" rel="stylesheet" type="text/css"/>
     <link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css"/>
+    
 </head>
 <body style="background: url({% static 'background.jpg' %}); background-size: 100% 100%">
     
@@ -60,10 +62,7 @@
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'all_task_schedules' %}">Schedules</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'joined_group_list' %}">Groups</a>
+                    <a class="nav-link" href="{% url 'all_task_schedules' %}">Schedules & Joined Groups</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/about">About</a>

@@ -645,9 +645,12 @@ def allTaskSchedules(request: HttpRequest):
         monthString = now.strftime("%B")
         yearString = str(now.year)
 
+        groupsJoined = LearnGroup.objects.filter(students__id__contains=request.user.id).all()
+
         context = {'upcomingTasks': upcomingTasks, 'lateTasks': lateTasks, 
                    'daysArray': daysArray, 'currentDay': currentDay, 'monthString': monthString, 
-                   'yearString': yearString, 'daysWithDeadlines': daysWithDeadlines, 'lastMonth': lastMonth, 'nextMonth': nextMonth}    
+                   'yearString': yearString, 'daysWithDeadlines': daysWithDeadlines, 'lastMonth': lastMonth, 
+                   'nextMonth': nextMonth, 'joinedGroups': groupsJoined}    
         return render(request, 'all_task_schedules.html', context)
     else:
         return render(request, '404page.html')
@@ -793,6 +796,7 @@ def editDeleteLearnGroup(request: HttpRequest, groupId: int):
                 return render(request, '403page.html')
             
             learnGroup.delete()
+            messages.success(request, 'Delete learning group successfully!')
             return redirect(reverse('classroom_details', args=[classroomId]))
     else:
         return render(request, '404page.html')
@@ -881,8 +885,10 @@ def deleteMemberFromLearnGroup(request: HttpRequest, groupId: int, memberId: int
         #Delete group if no student left
         if learnGroup.students.count() == 0:
             learnGroup.delete()
+            messages.success(request, 'Remove last student and delete learn group successfully!')
             return redirect(reverse('classroom_details', args=[learnGroup.classroom.id]))
-        
+
+        messages.success(request, 'Remove student successfully!')
         return redirect(reverse('search_in_group_edit', args=[groupId]))
     else:
         return render(request, '404page.html')
@@ -901,6 +907,7 @@ def addCommentToLearnGroup(request: HttpRequest, groupId: int):
         newComment = GroupComment.objects.create(commenter=request.user, comment=comment, learnGroup=learnGroup, file=file)
         newComment.save()
 
+        messages.success(request, 'Add comment successfully!')
         return redirect(reverse('learn_group_details', args=[groupId]))
     else:
         return render(request, '404page.html')
@@ -916,6 +923,7 @@ def editDeleteCommentLearnGroup(request: HttpRequest, commentId: int):
                 return render(request, '403page.html')
             
             comment.delete()
+            messages.success(request, 'Delete comment successfully!')
             return redirect(reverse('learn_group_details', args=[comment.learnGroup.id]))
         elif request.POST.get('_method') == 'put':
             comment = GroupComment.objects.filter(id=commentId).first()
@@ -934,6 +942,7 @@ def editDeleteCommentLearnGroup(request: HttpRequest, commentId: int):
             comment.comment = newComment
             comment.file = file
             comment.save()
+            messages.success(request, 'Edit comment successfully!')
             return redirect(reverse('learn_group_details', args=[comment.learnGroup.id]))
     else:
         return render(request, '404page.html')
@@ -954,12 +963,3 @@ def searchInGroupEdit(request: HttpRequest, groupId: int):
     context={'searchResult': searchResult, 'group': group, 'groupId': groupId, 
              'members': members}
     return render(request, 'group_edit.html', context)
-
-@login_required(login_url='login')
-def joinedGroupPage(request: HttpRequest):
-    if request.method == 'GET':
-        groupsJoined = LearnGroup.objects.filter(students__id__contains=request.user.id).all()
-        context = {'groups': groupsJoined}
-        return render(request, 'joined_groups.html', context)
-    else:
-        return render(request, '404page.html')
