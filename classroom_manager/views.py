@@ -727,9 +727,12 @@ def classroomAnalytics(request: HttpRequest, classroomId: int):
         assignmentCompletion = round(assignmentCompletion, 2)
 
         averageGrade = Submission.objects.filter(task__classroom=classroom, task__isAssignment=True).aggregate(average=Avg('gpa'))['average']
-        averageGrade = round(averageGrade, 2)
+        
         if averageGrade == None:
             averageGrade = 0
+        else:
+            averageGrade = round(averageGrade, 2)
+        
 
         context = {'classroom': classroom, 'assignmentCount': taskCount, 'studentCount': studentCount,
                     'submissionCount': submissionCount, 'averageGrade': averageGrade, 
