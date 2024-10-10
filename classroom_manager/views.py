@@ -312,7 +312,7 @@ def classroomUsers(request: HttpRequest, classroomId):
         isCurrentUserTeacher = isTeacher(request.user.id, classroom.id)
         context = {'classroom': classroom, 'students': students, 'teachers': teachers, 'classroomId': id, 
                      'isTeacher': isCurrentUserTeacher, 'joinPath': request.get_host() + reverse('join_classroom_by_id', args=[classroomId]),
-                      'pageRange': pageRange, 'currentPage': page, 'groups': groups, 'groupsJoined': groupsJoined, 'currentClassroom': classroom }
+                      'pageRange': pageRange, 'currentPage': page, 'groups': groups, 'joinedGroups': groupsJoined, 'currentClassroom': classroom }
         
         return render(request, 'classroom_details_users.html', context)
     else:
