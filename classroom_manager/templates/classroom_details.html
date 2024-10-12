@@ -28,6 +28,9 @@
                 <a class="nav-link" href="{% url 'classroom_analytics' classroom.id %}">Analytics</a>
             </li>
             {% endif %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'gpa_by_classroom_id' classroom.id %}">GPAs</a>
+            </li>
         </ul>
         <div>
             <div class="row">

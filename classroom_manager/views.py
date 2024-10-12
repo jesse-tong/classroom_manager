@@ -424,6 +424,8 @@ def getEditDeleteTaskById(request: HttpRequest, taskId: int):
             description = request.POST.get('description')
             deadline = request.POST.get('deadline')
             acceptLateSubmission = request.POST.get('acceptLateSubmission')
+            weight = request.POST.get('weight')
+
             if isAssignment == None:
                 isAssignment = False
             else:
@@ -444,6 +446,10 @@ def getEditDeleteTaskById(request: HttpRequest, taskId: int):
             task.isAssignment = isAssignment
             task.description = description
             task.deadline = dateparse(deadline)
+            if task.isAssignment == True:
+                task.weight = weight
+            else:
+                task.weight = 0.0
             task.save()
             taskFiles = TaskFile.objects.filter(task=task).all()
             context = {'task': task, taskFiles: taskFiles}
@@ -480,6 +486,7 @@ def createTaskPage(request: HttpRequest, classroomId: int):
         
         title = request.POST.get('title')
         deadline = request.POST.get('deadline')
+        weight = request.POST.get('weight')
             
         if isAssignment == None:
             isAssignment = False
@@ -501,8 +508,14 @@ def createTaskPage(request: HttpRequest, classroomId: int):
         except:
             messages.error(request, 'Task must have a valid deadline!')
             return redirect(reverse('classroom_details', args=[classroomId]))
+        
         newTask.isAssignment = isAssignment
         newTask.description = description
+        if isAssignment == True:
+            newTask.weight = weight
+        else:
+            newTask.weight = 0.0
+
         if deadline != None:
             newTask.deadline = deadline
 
@@ -968,3 +981,40 @@ def searchInGroupEdit(request: HttpRequest, groupId: int):
     context={'searchResult': searchResult, 'group': group, 'groupId': groupId, 
              'members': members}
     return render(request, 'group_edit.html', context)
+
+def getAssignmentNames(classroomId: int):
+    tasks = ClassroomTask.objects.filter(isAssignment=True, classroom__id=classroomId).order_by('id').all()
+    taskNames = [task.title for task in tasks]
+    return taskNames
+
+def getStudentGpa(studentId: int):
+    tasks = ClassroomTask.objects.filter(isAssignment=True, classroom__students__id__contains=studentId).order_by('id').all()
+    total_gpa = 0
+    gpas = []
+    student = User.objects.filter(id=studentId).first()
+    for task in tasks:
+        submission = Submission.objects.filter(student__id=studentId, task=task).first()
+        if submission != None:
+            if task.weight == None:
+                task.weight = 0.0
+            total_gpa += submission.gpa * task.weight / 100.0
+            gpas.append(submission.gpa)
+        else:
+            gpas.append(0.0)
+    
+    return {'totalGpa': total_gpa, 'gpas': gpas, 'student': student}
+
+def getGpaOfAllStudents(request: HttpRequest, classroomId: int):
+    assignmentNames = getAssignmentNames(classroomId)
+    classroom = Classroom.objects.filter(id=classroomId).first()
+    students = classroom.students.order_by('id').all()
+
+    isCurrentUserTeacher = isTeacher(request.user.id, classroomId)
+
+    studentGpas = []
+    for student in students:
+        studentGpas.append(getStudentGpa(student.id))
+
+    context = {'studentGpas': studentGpas, 'taskNames': assignmentNames, 'classroom': classroom, 'isTeacher': isCurrentUserTeacher}
+    return render(request, 'gpa_details.html', context)
+    

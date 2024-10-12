@@ -31,6 +31,8 @@
     <link href="{% static 'mdb5-free-standard/css/mdb.min.css' %}" rel="stylesheet" type="text/css"/>
     <link href="{% static 'calendar.css' %}" rel="stylesheet" type="text/css"/>
     <link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css"/>
+    <script src="{% static 'js/chatbot.js' %}" defer></script>
+    <!--<link rel="stylesheet" href="{% static 'css/chatbot.css' %}"> -->
     
 </head>
 <body style="background: url({% static 'background.jpg' %}); background-size: 100% 100%">
@@ -176,6 +178,28 @@
             </footer> 
         </div>
     </div>
+
+    <!--
+    <div class="chatBot">
+        <header>
+            <h2>ChatBot</h2>
+            <span alt="Close" 
+                  id="cross" 
+                  onclick="cancel()">X</span>
+        </header>
+        <ul class="chatbox">
+            <li class="chat-incoming chat">
+                <p>Hey! How can I assist you today?</p>
+            </li>
+        </ul>
+        <div class="chat-input">
+            <textarea rows="0" cols="17"
+                      placeholder="Enter a message..."></textarea>
+            <button id="sendBTN">Send</button>
+        </div>
+    </div>
+    -->
+    
     <!--====== Tiny Slider js ======-->
     <script src="{% static 'js/tiny-slider.js' %}"></script>
     <script>

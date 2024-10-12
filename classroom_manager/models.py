@@ -31,6 +31,7 @@ class ClassroomTask(models.Model):
     classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE)
     deadline = models.DateTimeField(null=True)
     acceptLateSubmission = models.BooleanField(default=True)
+    weight = models.FloatField(default=0.0)
     def __str__(self):
         return self.description[:50]
     

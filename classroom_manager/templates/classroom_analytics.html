@@ -25,6 +25,9 @@
             <li class="nav-item">
                 <a class="nav-link active bg-light" href="{% url 'classroom_analytics' classroom.id %}">Analytics</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'gpa_by_classroom_id' classroom.id %}">GPAs</a>
+            </li>
         </ul>
         <div class="row">
             <div class="d-flex justify-content-between align-items-center">
