@@ -2,11 +2,11 @@
 
 {% block content %}
     {% if messages %}
-    <ul class="messages">
+    <div class="messages">
         {% for message in messages %}
-        <li{% if message.tags %} class="alert {{ message.tags }}"{% endif %}>{{ message }}</li>
+        <div{% if message.tags %} class="alert {{ message.tags }}"{% endif %}>{{ message }}</div>
         {% endfor %}
-    </ul>
+    </div>
     {% endif %}
     <h4>Create classroom task/assignment</h4>
 
