@@ -1018,3 +1018,99 @@ def getGpaOfAllStudents(request: HttpRequest, classroomId: int):
     context = {'studentGpas': studentGpas, 'taskNames': assignmentNames, 'classroom': classroom, 'isTeacher': isCurrentUserTeacher}
     return render(request, 'gpa_details.html', context)
     
+def registerAdmin(request: HttpRequest):
+    if request.method == 'GET':
+        return render(request, 'register_admin.html')
+    elif request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        confirmPassword = request.POST.get('confirmPassword')
+        if password != confirmPassword:
+            messages.error(request, 'Password and confirm password do not match!')
+            return redirect(reverse('register_admin'))
+        if User.objects.filter(username=username).exists():
+            messages.error(request, 'Username already exists!')
+            return redirect(reverse('register_admin'))
+        if User.objects.filter(email=email).exists():
+            messages.error(request, 'Email already exists!')
+            return redirect(reverse('register_admin'))
+        
+        user = User.objects.create_user(username=username, email=email, password=password, is_staff=True)
+        admin_group = Group.objects.filter(name='admin').get_or_create(name='admin')
+        user.groups.add(admin_group)
+        user.save()
+        messages.success(request, 'Register admin successfully!')
+        return redirect(reverse('login'))
+    
+def isUserAdmin(userId: int):
+    return User.objects.filter(id=userId, is_staff=True).exists()
+
+@login_required(login_url='login')
+def siteSettings(request: HttpRequest):
+    if not isUserAdmin(request.user.id):
+        return render(request, '403page.html')
+    if request.method == 'GET':
+        jitsiInstance = Configuration.objects.filter(key='jitsiInstance').first()
+        siteName = Configuration.objects.filter(key='siteName').first()
+        siteDescription = Configuration.objects.filter(key='siteDescription').first()
+        context = {'jitsiInstance': jitsiInstance.value, 'siteName': siteName.value, 'siteDescription': siteDescription.value }
+        return render(request, 'site_settings.html', context)
+    
+    elif request.method == 'POST':
+        jitsiInstance = request.POST.get('jitsiInstance')
+        jitsiInstanceSelect = request.POST.get('jitsiInstanceSelect')
+        siteName = request.POST.get('siteName')
+        siteDescription = request.POST.get('siteDescription')
+
+        if jitsiInstance == None and jitsiInstanceSelect == None:
+            messages.error(request, 'Jitsi instance cannot be empty!')
+            return redirect(reverse('site_settings'))
+        
+        if siteName == None:
+            messages.error(request, 'Site name cannot be empty!')
+            return redirect(reverse('site_settings'))
+
+        if siteDescription == None:
+            messages.error(request, 'Site description cannot be empty!')
+            return redirect(reverse('site_settings'))
+
+        jitsiInstanceConfig = Configuration.objects.filter(key='jitsiInstance').first()
+        siteNameConfig = Configuration.objects.filter(key='siteName').first()
+        siteDescriptionConfig = Configuration.objects.filter(key='siteDescription').first()
+
+        if jitsiInstanceConfig == None:
+            Configuration.objects.create(key='jitsiInstance', value=jitsiInstance)
+        else:
+            if jitsiInstanceSelect != None and jitsiInstanceSelect != '':
+                jitsiInstanceConfig.value = jitsiInstanceSelect
+            elif jitsiInstance != None and jitsiInstance != '':
+                jitsiInstanceConfig.value = jitsiInstance
+            jitsiInstanceConfig.save()
+        
+        if siteNameConfig == None:
+            Configuration.objects.create(key='siteName', value=siteName)
+        else:
+            siteNameConfig.value = siteName
+            siteNameConfig.save()
+        
+        if siteDescriptionConfig == None:
+            Configuration.objects.create(key='siteDescription', value=siteDescription)
+        else:
+            siteDescriptionConfig.value = siteDescription
+            siteDescriptionConfig.save()
+
+        messages.success(request, 'Update site settings successfully!')
+        return redirect(reverse('site_settings'))
+
+@login_required(login_url='login')
+def classroomJitsi(request: HttpRequest, classroomId: int):
+    classroom = Classroom.objects.filter(id=classroomId).first()
+    classroomName = classroom.name
+    jitsiRoom = str(classroomId) + '-' + classroomName
+    isCurrentUserTeacher = isTeacher(request.user.id, classroomId)
+    if classroom == None:
+        return render(request, '404page.html')
+
+    context = {'classroom': classroom, 'jitsiRoom': jitsiRoom, 'isTeacher': isCurrentUserTeacher}
+    return render(request, 'classroom_jitsi.html', context)

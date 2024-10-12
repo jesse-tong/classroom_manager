@@ -1,0 +1,37 @@
+{% extends 'navbar.html' %}
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}
+    <div{% if message.tags %} class="alert {{ message.tags }}"{% endif %}>{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+{% block content %}
+<div class="container">
+    <h1>Site Settings</h1>
+    <form action="{% url 'site_settings' %}" method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="siteName" class="form-label">Site Name</label>
+            <input type="text" class="form-control" id="siteName" name="siteName" value="{{ siteName }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="siteDescription" class="form-label">Site Description</label>
+            <textarea class="form-control" id="siteDescription" name="siteDescription" rows="3" required>{{ siteDescription }}</textarea>
+        </div>
+        <div class="mb-3">
+            <label for="jitsiInstanceSelect" class="form-label">Jitsi Instance</label>
+            <select class="form-select" id="jitsiInstanceSelect" name="jitsiInstanceSelect">
+                <option value="" {% if jitsiInstance == '' %}selected{% endif %}>Select a Jitsi Instance</option>
+                <option value="https://meet.isf.es" {% if jitsiInstance == 'https://meet.isf.es/' %}selected{% endif %}>https://meet.isf.es/</option>
+                <option value="https://meet.darmstadt.social/" {% if jitsiInstance == 'https://meet.darmstadt.social/' %}selected{% endif %}>https://meet.darmstadt.social/</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="jitsiInstance" class="form-label">Jitsi Instance</label>
+            <input type="text" class="form-control" id="jitsiInstance" name="jitsiInstance" value="{{ jitsiInstance }}">
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+</div>
+{% endblock %}
