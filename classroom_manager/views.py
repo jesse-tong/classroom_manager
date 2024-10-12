@@ -1114,3 +1114,37 @@ def classroomJitsi(request: HttpRequest, classroomId: int):
 
     context = {'classroom': classroom, 'jitsiRoom': jitsiRoom, 'isTeacher': isCurrentUserTeacher}
     return render(request, 'classroom_jitsi.html', context)
+
+@login_required(login_url='login')
+def cloneClassroom(request: HttpRequest, classroomId: int):
+    if request.method == 'GET':
+        classroom = Classroom.objects.filter(id=classroomId).first()
+        if classroom == None:
+            return render(request, '404page.html')
+        if not isTeacher(request.user.id, classroomId):
+            return render(request, '403page.html')
+        
+        if request.GET.get('name') == None:
+            name = classroom.name + ' (Copy)'
+        else:
+            name = request.GET.get('name')
+
+        if request.GET.get('description') == None:
+            description = request.GET.get('description')
+        else:
+            description = classroom.description
+        user = User.objects.filter(id=request.user.id).first()
+        newClassroom = Classroom.objects.create(name=name, description=description)
+        newClassroom.students.add(user)
+
+        tasks = ClassroomTask.objects.filter(classroom=classroom).all()
+        for task in tasks:
+            newTask = ClassroomTask.objects.create(isAssignment=task.isAssignment, classroom=newClassroom, title=task.title, description=task.description, deadline=task.deadline, weight=task.weight)
+            taskFiles = TaskFile.objects.filter(task=task).all()
+            taskfiles = []
+            for file in taskFiles:
+                taskfiles.append(TaskFile(file=file.file, task=newTask))
+            TaskFile.objects.bulk_create(taskfiles)
+
+        messages.success(request, 'Clone classroom successfully!')
+        return redirect(reverse('classroom_details', args=[newClassroom.id]))

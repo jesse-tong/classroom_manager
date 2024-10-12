@@ -14,6 +14,7 @@ urlpatterns = [
 
     path('classroom', views.classroomPage, name="classroom_list"),
     path('classroom/create', views.classroomCreatePage, name="classroom_create"),
+    path('classroom/<int:classroomId>/copy', views.cloneClassroom, name="classroom_copy"),
     path('classroom/<int:id>', views.classroomDetailPage, name="classroom_details"),
     path('classroom/<int:classroomId>/analytics', views.classroomAnalytics, name="classroom_analytics"),
     path('classroom/<int:classroomId>/gpaCount', views.classroomSubmissionCountByGpa, name="classroom_gpa_count"),
