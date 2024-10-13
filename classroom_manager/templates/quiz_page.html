@@ -1,0 +1,113 @@
+{% extends 'navbar.html' %}
+{% block content %}
+
+{% load static %}
+    <div class="container">
+
+        <div style="width: 100%;" class="mt-3 position-relative">
+            <img style="width: 100%; border-radius: 15px;"  src="{% static classroom.background %}"/ >
+            <div style="padding: 1rem 1.5rem; top: 20%; left: 5%; width: 85%; color: white;" class="position-absolute">
+                <h2 style="text-overflow: ellipsis; overflow: hidden; display: block; whitespace: no-wrap;">{{ classroom.name }}</h2>
+            </div>
+            <div style="left: 94%; top: 78%; position: absolute;">
+                <div type="button" style="background-color: #00000000" class="rounded-circle" data-bs-toggle="modal" data-bs-target="#cloneClassroomModal">
+                    <i class="fa-solid fa-copy text-white fa-lg"></i>
+                </div>
+            </div>
+        </div>
+        <ul class="nav nav-tabs mb-2 mt-3 bg-light">
+            <li class="nav-item">
+                <a class="nav-link" aria-current="page" href="{% url 'classroom_details' classroom.id %}">Assignments</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'classroom_details_users' classroom.id %}">Students and teachers</a>
+            </li>
+            {% if isTeacher %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'classroom_analytics' classroom.id %}">Analytics</a>
+            </li>
+            {% endif %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'gpa_by_classroom_id' classroom.id %}">GPAs</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" aria-current="page" href="{% url 'classroom_jitsi' classroom.id %}">Jitsi</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active bg-light" aria-current="page" href="#">Quizes</a>
+            </li>
+        </ul>
+        <div>
+
+            <h4>Quizes</h4>
+
+            {% if isTeacher %}
+            <button class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#quizCreateModal">Create Quiz</button>
+            {% endif %}
+
+            {% for quiz in quizes %}
+            <div class="border rounded p-3 mb-3">
+                <div class="d-flex align-items-center">
+                    <div class="bg-primary rounded-circle me-2" style="width: 50px; height: 50px; position: relative;">
+                        <i class="bi bi-bookmarks text-white" style="font-size: 20px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
+                    </div>
+                    <div class="ms-2">
+                        <h5 class="text-black m-auto"><a href="{% url 'answer_quiz' quiz.id %}" class="text-black">{{ quiz.title }}</a></h5>
+                        <p class="text-secondary m-auto"><small>ID: {{ quiz.id }} - Deadline: {{ quiz.deadline }}</small></p>
+                    </div>
+                    {% if quiz.yourSubmission %}
+                    <div class="ms-2 ms-auto">
+                        <p class="text-secondary m-auto">Correct count: {{ quiz.yourSubmission.correctCount }}</p>
+                        <p class="text-secondary m-auto">Number of questions: {{ quiz.questionCount }}</p>
+                        {% if isTeacher %}
+                            <a href="{% url 'quiz_details' quiz.id %}" class="btn btn-primary">Quiz submissions/Edit quiz</a>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% endfor %}
+            <!--Quiz creation modal -->
+            <div class="modal fade" id="quizCreateModal" tabindex="-1" aria-labelledby="quizCreateModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="quizCreateModalLabel">Create Quiz</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form action="{% url 'quiz_page' classroom.id %}" method="POST">
+                            <div class="modal-body">
+                                
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label for="title" class="form-label">Title</label>
+                                    <input type="text" class="form-control" id="title" name="title" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">Description</label>
+                                    <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="deadline" class="form-label">Deadline</label>
+                                    <input type="datetime-local" class="form-control" id="deadline" name="deadline" required>
+                                </div>
+                                <!--
+                                <div class="mb-3">
+                                    <label for="duration" class="form-label">Duration (in minutes)</label>
+                                    <input type="number" class="form-control" id="duration" name="duration" required>
+                                </div>
+                                -->
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Create</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

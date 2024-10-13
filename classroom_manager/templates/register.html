@@ -2,13 +2,6 @@
 
 {% block content %}
 <div class="px-lg-5">
-    {% if messages %}
-    <div class="messages">
-        {% for message in messages %}
-        <div{% if message.tags %} class="alert {{ message.tags }}"{% endif %}>{{ message }}</div>
-        {% endfor %}
-    </div>
-    {% endif %}
 
     <!-- Pills navs -->
     <ul class="nav nav-tabs nav-justified mb-3" id="ex1" role="tablist">

@@ -2,12 +2,7 @@
 
 {% endif %}
 {% block content %}
-{% if messages %}
-<div class="messages">
-    {% for message in messages %}
-    <div{% if message.tags %} class="alert {{ message.tags }}"{% endif %}>{{ message }}</div>
-    {% endfor %}
-</div>
+
 <div class="container">
     <h1>Site Settings</h1>
     <form action="{% url 'site_settings' %}" method="post">

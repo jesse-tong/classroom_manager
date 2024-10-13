@@ -1150,7 +1150,7 @@ def cloneClassroom(request: HttpRequest, classroomId: int):
         return redirect(reverse('classroom_details', args=[newClassroom.id]))
     
 @login_required(login_url='login')
-def createQuiz(request: HttpRequest, classroomId: int):
+def quizPage(request: HttpRequest, classroomId: int):
     if request.method == 'GET':
         classroom = Classroom.objects.filter(id=classroomId).first()
         if classroom == None:
@@ -1159,9 +1159,16 @@ def createQuiz(request: HttpRequest, classroomId: int):
             return render(request, '403page.html')
         
         quizes = Quiz.objects.filter(classroom=classroom).all()
-        context = {'classroom': classroom, 'quizes': quizes}
-        return render(request, 'quiz_create.html', context)
+        for i in range(len(quizes)):
+            quizes[i].questionCount = QuizQuestion.objects.filter(quiz=quizes[i]).count()
+            quizes[i].yourSubmission = QuizSubmission.objects.filter(quiz=quizes[i], student=request.user).first()
+
+        isCurrentUserTeacher = isTeacher(request.user.id, classroomId)
+
+        context = {'classroom': classroom, 'quizes': quizes, 'isTeacher': isCurrentUserTeacher}
+        return render(request, 'quiz_page.html', context)
     elif request.method == 'POST':
+        #Create new quiz
         classroom = Classroom.objects.filter(id=classroomId).first()
         if classroom == None:
             return render(request, '404page.html')
@@ -1214,9 +1221,13 @@ def editDeleteQuiz(request: HttpRequest, quizId: int):
             quiz.title = title
             quiz.description = description
             quiz.deadline = deadline
-            quiz.save()
+            try:
+                quiz.save()
+            except:
+                messages.error(request, 'Error saving quiz details!')
+                return redirect(reverse('classroom_details', args=[quiz.classroom.id]))
             messages.success(request, 'Edit quiz successfully!')
-            return redirect(reverse('classroom_details', args=[quiz.classroom.id]))
+            return redirect(reverse('quiz_page', args=[quiz.id]))
     else:
         return render(request, '404page.html')
 
@@ -1247,15 +1258,28 @@ def addQuestionToQuiz(request: HttpRequest, quizId: int):
         answer = request.POST.get('answer')
         if answer not in valid_answer:
             messages.error(request, 'Answer must be a, b, c, d or e!')
-            return redirect(reverse('quiz_details', args=[quizId]))
+            return redirect(reverse('quiz_question_details', args=[quizId]))
         
         newQuestion = QuizQuestion.objects.create(quiz=quiz, question=question, correct=answer, a=a, b=b, c=c, d=d, e=e)
         newQuestion.save()
         messages.success(request, 'Add question successfully!')
-        return redirect(reverse('quiz_details', args=[quizId]))
+        return redirect(reverse('quiz_question_details', args=[quizId]))
     
 @login_required(login_url='login')
 def quizDetails(request: HttpRequest, quizId: int):
+    if request.method == 'GET':
+        quiz = Quiz.objects.filter(id=quizId).first()
+        if quiz == None:
+            return render(request, '404page.html')
+
+        isCurrentUserTeacher = isTeacher(request.user.id, quiz.classroom.id)
+        context = {'quiz': quiz,  'isTeacher': isCurrentUserTeacher}
+        return render(request, 'quiz_details.html', context)
+    else:
+        return render(request, '404page.html')
+
+@login_required(login_url='login')
+def quizQuestionDetails(request: HttpRequest, quizId: int):
     if request.method == 'GET':
         quiz = Quiz.objects.filter(id=quizId).first()
         if quiz == None:
@@ -1270,7 +1294,7 @@ def quizDetails(request: HttpRequest, quizId: int):
 
         isCurrentUserTeacher = isTeacher(request.user.id, quiz.classroom.id)
         context = {'quiz': quiz, 'questions': questions, 'editingQuestionId': editingQuestionId, 'isTeacher': isCurrentUserTeacher}
-        return render(request, 'quiz_details.html', context)
+        return render(request, 'quiz_question_details.html', context)
     else:
         return render(request, '404page.html')
 
@@ -1285,7 +1309,7 @@ def editDeleteQuestion(request: HttpRequest, questionId: int):
             
             question.delete()
             messages.success(request, 'Delete question successfully!')
-            return redirect(reverse('quiz_details', args=[question.quiz.id]))
+            return redirect(reverse('quiz_question_details', args=[question.quiz.id]))
         elif request.POST.get('_method') == 'put':
             question = QuizQuestion.objects.filter(id=questionId).first()
             if question == None:
@@ -1302,11 +1326,13 @@ def editDeleteQuestion(request: HttpRequest, questionId: int):
             answer = request.POST.get('answer')
             if answer not in valid_answer:
                 messages.error(request, 'Answer must be a, b, c, d or e!')
-                return redirect(reverse('quiz_details', args=[question.quiz.id]))
+                return redirect(reverse('quiz_question_details', args=[question.quiz.id]))
             question.answer = answer
             question.save()
             messages.success(request, 'Edit question successfully!')
-            return redirect(reverse('quiz_details', args=[question.quiz.id]))
+            return redirect(reverse('quiz_question_details', args=[question.quiz.id]))
+        else:
+            return render(request, '404page.html')
     else:
         return render(request, '404page.html')
 
@@ -1314,22 +1340,14 @@ def editDeleteQuestion(request: HttpRequest, questionId: int):
 def answerQuiz(request: HttpRequest, quizId: int):
     if request.method == 'GET':
         quiz = Quiz.objects.filter(id=quizId).first()
-        userSubmission = QuizSubmission.objects.filter(student=request.user, quiz=quiz).first()
-
-        if userSubmission != None:
-            correctCount = userSubmission.correctCount
-            questionCount = QuizQuestion.objects.filter(quiz=quiz).count()
-        else:
-            correctCount = None
-            questionCount = None
-                
+              
         if quiz == None:
             return render(request, '404page.html')
         #if isTeacher(request.user.id, quiz.classroom.id):
         #    return render(request, '403page.html')
         
         questions = QuizQuestion.objects.filter(quiz=quiz).all()
-        context = {'quiz': quiz, 'questions': questions, 'correctCount': correctCount, 'questionCount': questionCount}
+        context = {'quiz': quiz, 'questions': questions}
         return render(request, 'quiz_answer.html', context)
     elif request.method == 'POST':
 
@@ -1346,7 +1364,6 @@ def answerQuiz(request: HttpRequest, quizId: int):
         correctCount = 0
         newSubmission = QuizSubmission.objects.create(student=request.user, quiz=quiz)
         
-
         answers = []
         for question in questions:
             answer = request.POST.get(str(question.id))
@@ -1355,11 +1372,13 @@ def answerQuiz(request: HttpRequest, quizId: int):
             answers.append(QuizSubmissionAnswer(question=question, answer=answer, submission=newSubmission))
 
         QuizSubmissionAnswer.objects.bulk_create(answers)
+        questionCount = QuizQuestion.objects.filter(quiz=quiz).count()
         newSubmission.correctCount = correctCount
         newSubmission.save()
 
-        messages.success(request, 'Answer quiz successfully!')
-        return redirect(reverse('answer_quiz', args=[quizId]))
+        messages.success(request, 'Answer quiz successfully!\nYou got ' + str(correctCount) + 
+                         ' out of ' + str(questionCount) +' correct answers!')
+        return redirect(reverse('quiz_page', args=[quiz.classroom.id]))
     
 @login_required(login_url='login')
 def deleteQuizAnswer(request: HttpRequest, submissionId: int):
@@ -1372,7 +1391,7 @@ def deleteQuizAnswer(request: HttpRequest, submissionId: int):
         
         submission.delete()
         messages.success(request, 'Delete quiz answer successfully!')
-        return redirect(reverse('quiz_details', args=[submission.quiz.id]))
+        return redirect(reverse('student_quiz_submissions', args=[submission.quiz.id]))
     else:
         return render(request, '404page.html')
     

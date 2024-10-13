@@ -1,0 +1,76 @@
+{% extends 'navbar.html' %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center">
+         
+    <ul class="nav nav-tabs mb-3" id="ex1" role="tablist">
+        <li class="nav-item" role="presentation">
+        <a
+            data-mdb-tab-init
+            class="nav-link"
+            id="edit-quiz-details-tab-control"
+            href="{% url 'quiz_details' quiz.id %}"
+            role="tab"
+            aria-controls="edit-quiz-details-tab"
+            aria-selected="true" on-click="quizDetailsTabClicked"
+            >Edit quiz details</a>
+        </li>
+        <li class="nav-item" role="presentation">
+        <a data-mdb-tab-init class="nav-link"
+            id="question-edit-tab-control"
+            href="{% url 'quiz_question_details' quiz.id %}"
+            role="tab"
+            aria-controls="question-edit-tab" on-click="questionEditTabClicked"
+            aria-selected="false" >Edit quiz questions</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a data-mdb-tab-init class="nav-link active bg-light"
+            id="quiz-submission-tab-control"
+            href="#quiz-submission-tab"
+            role="tab"
+            aria-controls="quiz-submission-tab" on-click="questionEditTabClicked"
+            aria-selected="false" >Quiz submissions</a>
+        </li>
+    </ul>
+
+    <a href="{% url 'quiz_page' quiz.classroom.id %}" class="btn btn-primary">Back to quiz page</a>
+</div>
+
+<div class="tab-content" id="ex1-content">
+    <div class="tab-pane fade show active" id="quiz-submission-tab" role="tabpanel" aria-labelledby="quiz-submission-tab-control" >
+
+        <div class="container">
+            <h3>Quiz Submissions</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Quiz</th>
+                        <th>Student</th>
+                        <th>Score</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for submission in submissions %}
+                        <tr>
+                            <td>{{ submission.quiz.title }}</td>
+                            <td>{{ submission.student.username }}</td>
+                            <td>{{ submission.correctCount }}/{{ questionCount }}</td>
+                            <td>
+                                <form action="{% url 'delete_quiz_answer' submission.id %}" method="POST">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

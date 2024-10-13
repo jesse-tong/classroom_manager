@@ -8,7 +8,7 @@
     <div class="border rounded-2 px-3 py-3 mb-3 mt-0 shadow-sm bg-white" style="">
         <p class="text-black mt-0">{{ question }}</p>
         <div class="form-check">
-            <input class="form-check-input" type="radio" name="{{ question.id }}" value="a" id="answerA{{ question.id }}" >
+            <input class="form-check-input" type="radio" name="{{ question.id }}" value="a" id="answerA{{ question.id }}" required>
             <label class="form-check-label" for="answerA{{ question.id }}">
                 {{ question.a}}
             </label>

@@ -3,13 +3,7 @@
 {% block content %}
 {% load static %}
     
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert {{ message.level_tag }}">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
+    
     <div class="mb-2 mt-3 d-flex justify-content-between align-items-center">
         <div><h2>Classrooms</h2></div>
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createClassroomModal">
@@ -99,5 +93,5 @@
     </div>
     <!-- End modal -->
 
-    
+
 {% endblock %}

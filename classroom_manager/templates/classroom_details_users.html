@@ -29,6 +29,9 @@
             <li class="nav-item">
                 <a class="nav-link" aria-current="page" href="{% url 'classroom_jitsi' classroom.id %}">Jitsi</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" aria-current="page" href="{% url 'quiz_page' classroom.id %}">Quizes</a>
+            </li>
         </ul>
         <div>
             <button type="button" class="btn btn-secondary mt-2 mb-3" data-bs-toggle="modal" data-bs-target="#createLearnGroupModal">
