@@ -114,3 +114,48 @@ class Configuration(models.Model):
     def __str__(self):
         return self.key + ' = ' + self.value
 
+class Quiz(models.Model):
+    title = models.CharField(max_length=200)
+    description = models.CharField(max_length=3000)
+    classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE)
+    deadline = models.DateTimeField(null=True)
+    def __str__(self):
+        return self.title
+    
+class QuizQuestion(models.Model):
+    question = models.CharField(max_length=2000)
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    a = models.CharField(max_length=500)
+    b = models.CharField(max_length=500)
+    c = models.CharField(max_length=500)
+    d = models.CharField(max_length=500)
+    e = models.CharField(max_length=500)
+    correct = models.CharField(max_length=1)
+    
+    def __str__(self):
+        return self.question
+    
+    class Meta:
+        constraints = [
+            models.CheckConstraint(check=models.Q(correct__in=['a', 'b', 'c', 'd', 'e']), name='correct_answer_constraint')
+        ]
+    
+class QuizSubmission(models.Model):
+    student = models.ForeignKey(User, on_delete=models.CASCADE)
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    submissionDate = models.DateTimeField(auto_now_add=True)
+    correctCount = models.IntegerField(default=0)
+    def __str__(self):
+        return self.student.username + '\'s submission on quiz ' + self.quiz.title
+    
+class QuizSubmissionAnswer(models.Model):
+    question = models.ForeignKey(QuizQuestion, on_delete=models.CASCADE)
+    answer = models.CharField(max_length=1)
+    submission = models.ForeignKey(QuizSubmission, on_delete=models.CASCADE)
+    def __str__(self):
+        return self.answer + ' on question ' + self.question.question[:50] + '...'
+    
+    class Meta:
+        constraints = [
+            models.CheckConstraint(check=models.Q(answer__in=['a', 'b', 'c', 'd', 'e']), name='submission_answer_constraint')
+        ]

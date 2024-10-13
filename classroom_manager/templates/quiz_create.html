@@ -1,0 +1,58 @@
+{% extends 'navbar.html' %}
+{% block content %}
+<h1>Quizes</h1>
+<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#quizCreateModal">Create Quiz</button>
+{% for quiz in quizes %}
+<div class="border rounded p-3 mb-3">
+    <div class="d-flex align-items-center">
+        <div class="bg-primary rounded-circle me-2" style="width: 50px; height: 50px; position: relative;">
+            <i class="bi bi-bookmarks text-white" style="font-size: 20px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
+        </div>
+        <div class="ms-2">
+            <h5 class="text-black m-auto">{{ quiz.title }}</h5>
+            <p class="text-secondary m-auto"><small>ID: {{ quiz.id }} - Deadline: {{ quiz.deadline }}</small></p>
+        </div>
+    </div>
+</div>
+
+{% endfor %}
+<!--Quiz creation modal -->
+<div class="modal fade" id="quizCreateModal" tabindex="-1" aria-labelledby="quizCreateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="quizCreateModalLabel">Create Quiz</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{% url 'create_quiz' classroom.id %}" method="POST">
+                <div class="modal-body">
+                    
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Title</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="deadline" class="form-label">Deadline</label>
+                        <input type="datetime-local" class="form-control" id="deadline" name="deadline" required>
+                    </div>
+                    <!--
+                    <div class="mb-3">
+                        <label for="duration" class="form-label">Duration (in minutes)</label>
+                        <input type="number" class="form-control" id="duration" name="duration" required>
+                    </div>
+                    -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

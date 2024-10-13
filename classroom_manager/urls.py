@@ -45,6 +45,15 @@ urlpatterns = [
     path('classroom/group/comment/<int:commentId>', views.editDeleteCommentLearnGroup, name="edit_delete_group_comment"),
     path('classroom/group/<int:groupId>/addStudent/<int:memberId>', views.addMemberToLearnGroup, name="add_student_to_learn_group"),
     path('classroom/group/<int:groupId>/removeStudent/<int:memberId>', views.deleteMemberFromLearnGroup, name="remove_student_from_learn_group"),
+
+    path('classroom/<int:classroomId>/quiz/create', views.createQuiz, name="create_quiz"),
+    path('classroom/quiz/<int:quizId>', views.quizDetails, name="quiz_details"),
+    path('classroom/quiz/<int:quizId>/answer', views.answerQuiz, name="answer_quiz"),
+    path('classroom/quiz/<int:quizId>/edit', views.editDeleteQuiz, name="edit_delete_quiz"),
+    path('classroom/quiz/<int:quizId>/add', views.addQuestionToQuiz, name="add_question_to_quiz"),
+    path('classroom/quiz/question/<int:questionId>', views.editDeleteQuestion, name="edit_delete_question"),
+    path('classroom/quiz/answer/<int:submissionId>/delete', views.deleteQuizAnswer, name="delete_quiz_answer"),
+    path('classroom/quiz/<int:quizId>/answers', views.studentQuizSubmissions, name="student_quiz_submissions"),
     
     path('user/schedule', views.allTaskSchedules, name="all_task_schedules"),
     path('user/edit-profile', views.editProfile, name="edit_profile"),

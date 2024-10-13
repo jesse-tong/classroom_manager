@@ -1,0 +1,204 @@
+{% extends 'navbar.html' %}
+{% block content %}
+<form class="mt-3" action="{% url 'edit_delete_quiz' quiz.id %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-group mt-2">
+        <label for="name" class="form-label">Name:</label>
+        <input type="text" class="form-control" id="name" name="name" value="{{ quiz.title }}" required>
+    </div>
+    <div class="form-group mt-2">
+        <label for="description" class="form-label">Description:</label>
+        <textarea id="description" name="description" class="form-control" style="height: 150px">{{ quiz.description }}</textarea>
+    </div>
+    <div class="form-group mt-2">
+        <label for="deadline" class="form-label">Deadline:</label>
+        <input type="datetime-local" id="deadline" name="deadline" class="form-control" value="{{ quiz.deadline }}">
+    </div>
+    <div class="form-group mt-2">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <button type="button" class="btn btn-danger ms-3" data-bs-toggle="modal" data-bs-target="#deleteQuizModal">Delete quiz</button>
+    </div>
+</form>
+<form class="mt-3" action="{% url 'add_question_to_quiz' quiz.id %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-group mt-2">
+        <label for="question" class="form-label">Question:</label>
+        <textarea id="question" name="question" class="form-control" style="height: 150px"></textarea>
+    </div>
+    <div class="mt-2 row">
+        <div class="form-group col-12 col-xl-6">
+            <label for="a" class="form-label">Answer A:</label>
+            <input type="text" class="form-control" id="a" name="a" required>
+        </div>
+        <div class="form-group col-12 col-xl-6">
+            <label for="b" class="form-label">Answer B:</label>
+            <input type="text" class="form-control" id="b" name="b" required>
+        </div>
+        <div class="form-group col-12 col-xl-6">
+            <label for="c" class="form-label">Answer C:</label>
+            <input type="text" class="form-control" id="c" name="c">
+        </div>
+        <div class="form-group col-12 col-xl-6">
+            <label for="d" class="form-label">Answer D:</label>
+            <input type="text" class="form-control" id="d" name="d">
+        </div>
+        <div class="form-group col-12 col-xl-6">
+            <label for="e" class="form-label">Answer D:</label>
+            <input type="text" class="form-control" id="e" name="e">
+        </div>
+        <div class="form-group col-12 col-xl-6">
+            <label for="correctAnswer" class="form-label">Correct Answer:</label>
+            <select class="form-select" id="answer" name="answer" required>
+                <option value="a">A</option>
+                <option value="b">B</option>
+                <option value="c">C</option>
+                <option value="d">D</option>
+                <option value="e">E</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group mt-2">
+        <button type="submit" class="btn btn-primary">Add question</button>
+    </div>
+</form>
+{% if questions %}
+    <h4 class="mt-3">Questions:</h4>
+    <div>
+        {% for question in questions %}
+        <hr class="hr"/>
+        
+        {% if editingQuestionId != question.id %}
+        <div class="border rounded-2 px-3 py-3 mb-0 mt-0 shadow-sm bg-white" style="">
+            <p class="text-black mt-0">{{ question }}</p>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="{{ question.id }}" value="a" id="answerA{{ question.id }}" 
+                {% if question.correct == 'a' %}checked{% endif %} readonly>
+                <label class="form-check-label" for="answerA{{ question.id }}">
+                  {{ question.a}}
+                </label>
+            </div>
+              
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="{{ question.id }}" value="b" id="answerB{{ question.id }}" 
+                {% if question.correct == 'b' %}checked{% endif %} readonly>
+                <label class="form-check-label" for="answerB{{ question.id }}">
+                  {{ question.b }}
+                </label>
+            </div>
+            {% if question.c %}
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="{{ question.id }}" value="c" id="answerC{{ question.id }}" 
+                    {% if question.correct == 'c' %}checked{% endif %} readonly>
+                    <label class="form-check-label" for="answerC{{ question.id }}">
+                    {{ question.c }}
+                    </label>
+                </div>
+            {% endif %}
+            {% if question.d %}
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="{{ question.id }}" value="d" id="answerD{{ question.id }}" 
+                    {% if question.correct == 'd' %}checked{% endif %} readonly>
+                    <label class="form-check-label" for="answerD{{ question.id }}">
+                    {{ question.d }}
+                    </label>
+                </div>
+            {% endif %}
+            {% if question.e %}
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="{{ question.id }}" value="e" id="answerE{{ question.id }}" 
+                    {% if question.correct == 'e' %}checked{% endif %} readonly>
+                    <label class="form-check-label" for="answerE{{ question.id }}">
+                    {{ question.e}}
+                    </label>
+                </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if editingQuestionId == question.id %}
+        <form action="{% url 'edit_delete_question' question.id %}" method="post">
+            {% csrf_token %}
+            <div class="form-group mt-2">
+                <label for="question" class="form-label">Question:</label>
+                <textarea id="question" name="question" class="form-control" style="height: 150px">{{ question.question }}</textarea>
+            </div>
+            <div class="mt-2 row">
+                <div class="form-group col-12 col-xl-6">
+                    <label for="a" class="form-label">Answer A:</label>
+                    <input type="text" class="form-control" id="a" name="a" value="{{ question.a }}" required >
+                </div>
+                <div class="form-group col-12 col-xl-6">
+                    <label for="b" class="form-label">Answer B:</label>
+                    <input type="text" class="form-control" id="b" name="b" value="{{ question.b }}" required>
+                </div>
+                <div class="form-group col-12 col-xl-6">
+                    <label for="c" class="form-label">Answer C:</label>
+                    <input type="text" class="form-control" id="c" name="c" value="{{ question.c }}" >
+                </div>
+                <div class="form-group col-12 col-xl-6">
+                    <label for="d" class="form-label">Answer D:</label>
+                    <input type="text" class="form-control" id="d" name="d" value="{{ question.d }}" >
+                </div>
+                <div class="form-group col-12 col-xl-6">
+                    <label for="e" class="form-label">Answer E:</label>
+                    <input type="text" class="form-control" id="e" name="e" value="{{ question.e }}" >
+                </div>
+                <div class="form-group col-12 col-xl-6">
+                    <label for="correctAnswer" class="form-label">Correct Answer:</label>
+                    <select class="form-select" id="correctAnswer" name="correctAnswer" required>
+                        <option value="a" {% if question.correct == 'a' %}selected{% endif %}>A</option>
+                        <option value="b" {% if question.correct == 'b' %}selected{% endif %}>B</option>
+                        <option value="c" {% if question.correct == 'c' %}selected{% endif %}>C</option>
+                        <option value="d" {% if question.correct == 'd' %}selected{% endif %}>D</option>
+                        <option value="e" {% if question.correct == 'e' %}selected{% endif %}>E</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group mt-2">
+                <button type="submit" class="btn btn-primary">Add question</button>
+            </div>
+        </form>
+        {% endif %}
+        
+        <div class="d-flex align-items-center mt-2">
+            {% if editingQuestionId is none %}
+            <a class="btn btn-primary" role="button" 
+            href="{% url 'quiz_details' question.quiz.id %}?editingQuestionId={{ question.id }}">Edit</a>
+            {% endif %}
+            
+            {% if isTeacher %}
+            <form class="ms-3" action="{% url 'edit_delete_question' question.id %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="_method" value="delete">
+                <button type="submit" class="btn btn-danger">Delete question</button>
+            </form>
+            {% endif %}
+        </div>
+
+        {% endfor %}
+    </div>
+{% endif %}
+
+<!--Delete quiz modal -->
+<div class="modal fade" id="deleteQuizModal" tabindex="-1" aria-labelledby="deleteQuizModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="deleteQuizModalLabel">Delete quiz</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{% url 'edit_delete_quiz' quiz.id %}" method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    Do you want to delete the quiz?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <input type="hidden" name="_method" value="delete">
+                    <button type="submit" class="btn btn-danger">Delete quiz</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
