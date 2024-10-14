@@ -3,13 +3,7 @@
 {% block content %}
     <div class="container">
         <div class="row mt-3">
-            {% if messages %}
-                <div class="messages">
-                    {% for message in messages %}
-                    <div{% if message.tags %} class="alert {{ message.tags }}"{% endif %}>{{ message }}</div>
-                    {% endfor %}
-                </div>
-            {% endif %}
+            
             <div class="col-12 col-lg-8">
                 <div>
                     <div class="">
