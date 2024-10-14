@@ -23,6 +23,11 @@
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'gpa_by_classroom_id' classroom.id %}">GPAs</a>
             </li>
+            {% if isTeacher %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'classroom_analytics' classroom.id %}">Analytics</a>
+            </li>
+            {% endif %}
             <li class="nav-item">
                 <a class="nav-link active bg-light" aria-current="page" href="#meet">Jitsi</a>
             </li>

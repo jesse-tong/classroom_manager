@@ -8,3 +8,7 @@ Từ các lần sau chỉ cần số 3 với 5 là đủ rồi. Không cần cà
 
 Tên đăng nhập superuser: admin
 Mật khẩu superuser: sudomakemeasandwich
+
+Site admin: localhost:8000/admin
+Còn nếu mở localhost:8000 rồi đăng nhập tài khoản admin thì sẽ có thêm option là Site settings, từ đây chỉnh mấy cái như 
+url Jitsi chẳng hạn.

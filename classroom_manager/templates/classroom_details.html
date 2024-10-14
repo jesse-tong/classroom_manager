@@ -59,6 +59,9 @@
             </div>
             <h4 class="mt-2">Assignments</h4>
             <div>
+                {% if not assignments %}
+                <p><i>No assignments</i></p>
+                {% endif %}
                 {% for task in assignments %}
                 <a href="{% url 'task_details' task.id %}" class="text-decoration-none">
                     <div class="border rounded p-3 mb-3">
@@ -82,6 +85,9 @@
             </div>
             <h4 class="mt-2">Tasks</h4>
             <div>
+                {% if not tasks %}
+                <p><i>No tasks</i></p>
+                {% endif %}
                 {% for task in tasks %}
                 <a href="{% url 'task_details' task.id %}" class="text-decoration-none">
                     <div class="border rounded p-3 mb-3">

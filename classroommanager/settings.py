@@ -92,6 +92,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'classroom_manager.context_processor.classroom_processor',
+                'classroom_manager.context_processor.configuration_processor',
             ],
         },
     },
