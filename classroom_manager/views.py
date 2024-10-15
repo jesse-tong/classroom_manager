@@ -1186,7 +1186,7 @@ def quizPage(request: HttpRequest, classroomId: int):
         newQuiz = Quiz.objects.create(classroom=classroom, deadline=deadline, title=title, description=description)
         newQuiz.save()
         messages.success(request, 'Create quiz successfully!')
-        return redirect(reverse('quiz_details', args=[newQuiz.id]))
+        return redirect(reverse('quiz_edit', args=[newQuiz.id]))
 
 valid_answer = ['a', 'b', 'c', 'd', 'e']
 
@@ -1258,12 +1258,12 @@ def addQuestionToQuiz(request: HttpRequest, quizId: int):
         answer = request.POST.get('answer')
         if answer not in valid_answer:
             messages.error(request, 'Answer must be a, b, c, d or e!')
-            return redirect(reverse('quiz_question_details', args=[quizId]))
+            return redirect(reverse('quiz_question_edit', args=[quizId]))
         
         newQuestion = QuizQuestion.objects.create(quiz=quiz, question=question, correct=answer, a=a, b=b, c=c, d=d, e=e)
         newQuestion.save()
         messages.success(request, 'Add question successfully!')
-        return redirect(reverse('quiz_question_details', args=[quizId]))
+        return redirect(reverse('quiz_question_edit', args=[quizId]))
     
 @login_required(login_url='login')
 def quizDetails(request: HttpRequest, quizId: int):
@@ -1274,7 +1274,7 @@ def quizDetails(request: HttpRequest, quizId: int):
 
         isCurrentUserTeacher = isTeacher(request.user.id, quiz.classroom.id)
         context = {'quiz': quiz,  'isTeacher': isCurrentUserTeacher}
-        return render(request, 'quiz_details.html', context)
+        return render(request, 'quiz_edit.html', context)
     else:
         return render(request, '404page.html')
 
@@ -1294,7 +1294,7 @@ def quizQuestionDetails(request: HttpRequest, quizId: int):
 
         isCurrentUserTeacher = isTeacher(request.user.id, quiz.classroom.id)
         context = {'quiz': quiz, 'questions': questions, 'editingQuestionId': editingQuestionId, 'isTeacher': isCurrentUserTeacher}
-        return render(request, 'quiz_question_details.html', context)
+        return render(request, 'quiz_question_edit.html', context)
     else:
         return render(request, '404page.html')
 
@@ -1309,7 +1309,7 @@ def editDeleteQuestion(request: HttpRequest, questionId: int):
             
             question.delete()
             messages.success(request, 'Delete question successfully!')
-            return redirect(reverse('quiz_question_details', args=[question.quiz.id]))
+            return redirect(reverse('quiz_question_edit', args=[question.quiz.id]))
         elif request.POST.get('_method') == 'put':
             question = QuizQuestion.objects.filter(id=questionId).first()
             if question == None:
@@ -1326,11 +1326,11 @@ def editDeleteQuestion(request: HttpRequest, questionId: int):
             answer = request.POST.get('answer')
             if answer not in valid_answer:
                 messages.error(request, 'Answer must be a, b, c, d or e!')
-                return redirect(reverse('quiz_question_details', args=[question.quiz.id]))
+                return redirect(reverse('quiz_question_edit', args=[question.quiz.id]))
             question.answer = answer
             question.save()
             messages.success(request, 'Edit question successfully!')
-            return redirect(reverse('quiz_question_details', args=[question.quiz.id]))
+            return redirect(reverse('quiz_question_edit', args=[question.quiz.id]))
         else:
             return render(request, '404page.html')
     else:

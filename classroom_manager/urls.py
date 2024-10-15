@@ -47,8 +47,8 @@ urlpatterns = [
     path('classroom/group/<int:groupId>/removeStudent/<int:memberId>', views.deleteMemberFromLearnGroup, name="remove_student_from_learn_group"),
 
     path('classroom/<int:classroomId>/quiz', views.quizPage, name="quiz_page"),
-    path('classroom/quiz/<int:quizId>', views.quizDetails, name="quiz_details"),
-    path('classroom/quiz/<int:quizId>/questions', views.quizQuestionDetails, name="quiz_question_details"),
+    path('classroom/quiz/<int:quizId>', views.quizDetails, name="quiz_edit"),
+    path('classroom/quiz/<int:quizId>/questions', views.quizQuestionDetails, name="quiz_question_edit"),
     path('classroom/quiz/<int:quizId>/answer', views.answerQuiz, name="answer_quiz"),
     path('classroom/quiz/<int:quizId>/edit', views.editDeleteQuiz, name="edit_delete_quiz"),
     path('classroom/quiz/<int:quizId>/add', views.addQuestionToQuiz, name="add_question_to_quiz"),

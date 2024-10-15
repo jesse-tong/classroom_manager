@@ -60,10 +60,17 @@
                         <p class="text-secondary m-auto">Correct count: {{ quiz.yourSubmission.correctCount }}</p>
                         <p class="text-secondary m-auto">Number of questions: {{ quiz.questionCount }}</p>
                         {% if isTeacher %}
-                            <a href="{% url 'quiz_details' quiz.id %}" class="btn btn-primary">Quiz submissions/Edit quiz</a>
+                            <a href="{% url 'quiz_edit' quiz.id %}" class="btn btn-primary">Quiz submissions/Edit quiz</a>
+                        {% endif %}
+                    </div>
+                    {% elif isTeacher %}
+                    <div class="ms-2 ms-auto">
+                        {% if isTeacher %}
+                            <a href="{% url 'quiz_edit' quiz.id %}" class="btn btn-primary">Quiz submissions/Edit quiz</a>
                         {% endif %}
                     </div>
                     {% endif %}
+                    
                 </div>
             </div>
 

@@ -10,7 +10,7 @@
             data-mdb-tab-init
             class="nav-link"
             id="edit-quiz-details-tab-control"
-            href="{% url 'quiz_details' quiz.id %}"
+            href="{% url 'quiz_edit' quiz.id %}"
             role="tab"
             aria-controls="edit-quiz-details-tab"
             aria-selected="true" on-click="quizDetailsTabClicked"
@@ -19,7 +19,7 @@
         <li class="nav-item" role="presentation">
         <a data-mdb-tab-init class="nav-link"
             id="question-edit-tab-control"
-            href="{% url 'quiz_question_details' quiz.id %}"
+            href="{% url 'quiz_question_edit' quiz.id %}"
             role="tab"
             aria-controls="question-edit-tab" on-click="questionEditTabClicked"
             aria-selected="false" >Edit quiz questions</a>
