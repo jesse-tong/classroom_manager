@@ -1346,6 +1346,10 @@ def answerQuiz(request: HttpRequest, quizId: int):
         #if isTeacher(request.user.id, quiz.classroom.id):
         #    return render(request, '403page.html')
         
+        if quiz.deadline != None and quiz.deadline < datetime.now(tz=quiz.deadline.tzinfo):
+            messages.error(request, 'Quiz is expired!')
+            return redirect(reverse('quiz_page', args=[quiz.classroom.id]))
+        
         questions = QuizQuestion.objects.filter(quiz=quiz).all()
         context = {'quiz': quiz, 'questions': questions}
         return render(request, 'quiz_answer.html', context)
