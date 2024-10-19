@@ -154,7 +154,7 @@
                 {% endif %}
 
                 {% if editingQuestionId == question.id %}
-                <form action="{% url 'edit_delete_question' question.id %}" method="post">
+                <form action="{% url 'edit_delete_question' question.id %}" method="post" id="question_{{ question.id }}">
                     {% csrf_token %}
                     <input type="hidden" name="_method" value="put" />
                     <div class="form-group mt-2">
@@ -220,4 +220,13 @@
         <!-- End question edit -->
     </div>
 </div>
+{% endblock %}
+
+{% block script %}
+const searchParams = new URLSearchParams(window.location.search);
+
+if (searchParams.has('editingQuestionId')) {
+    const editingQuestionId = searchParams.get('editingQuestionId');
+    document.getElementById('question_' + editingQuestionId).scrollIntoView();
+}
 {% endblock %}

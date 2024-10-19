@@ -2,7 +2,6 @@
 
 {% block content %}
     
-    {% endif %}
     <h1>Edit profile</h1>
     <form method="POST" class="needs-validation" action="{% url 'edit_profile' %}">
         {% csrf_token %}
