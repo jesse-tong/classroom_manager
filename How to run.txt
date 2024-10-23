@@ -3,8 +3,10 @@ Cách chạy:
 - Đầu tiên tạo một môi trường ảo (virtual environment) cho Python: python -m venv .venv
 - Vào môi trường ảo: . .venv\Scripts\activate (đối với Windows), . .venv/bin/activate (đối với Linux hoặc MacOS)
 - Cài package: pip -r requirements.txt
+- Migrate CSDL: python manage.py makemigrations; python manage.py migrate
 - Chạy: python manage.py runserver 
-Từ các lần sau chỉ cần số 3 với 5 là đủ rồi. Không cần cài Database do cái này dùng SQLite.
+Từ các lần sau chỉ cần số 3, 6 là đủ rồi. Không cần cài Database do cái này dùng SQLite. Khi clone lại tiếp từ code cũ thì 
+chạy từ 3 tới 6.
 
 Tên đăng nhập superuser: admin
 Mật khẩu superuser: sudomakemeasandwich

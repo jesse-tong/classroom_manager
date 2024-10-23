@@ -77,6 +77,18 @@
                         <option value="e">E</option>
                     </select>
                 </div>
+                <div class="form-group col-12 col-xl-6">
+                    <label for="video" class="form-label">Video:</div>
+                    <input type="file" name="video" accept="video/*" />
+                </div>
+                <div class="form-group col-12 col-xl-6">
+                    <label for="audio" class="form-label">Audio:</div>
+                    <input type="file" name="audio" accept="audio/*" />
+                </div>
+                <div class="form-group col-12 col-xl-6">
+                    <label for="image" class="form-label">Image:</div>
+                    <input type="file" name="image" accept="image/*" />
+                </div>
             </div>
             <div class="form-group mt-2">
                 <button type="submit" class="btn btn-primary">Add question</button>
@@ -94,12 +106,27 @@
                 {% if editingQuestionId != question.id %}
                 <div class="border rounded-2 px-3 py-3 mb-0 mt-0 shadow-sm bg-white" style="">
                     <p class="text-secondary">Question {{ forloop.counter }}:</p>
+                    
+                    {% if question.image %}
+                    <img src="{{ question.image.url }}" alt="{{ question.image.name }}" class="mx-auto mt-2" style="max-width: 80%"/>
+                    {% endif %}
+                    {% if question.audio %}
+                    <audio class="mx-auto mt-2" style="max-width: 80%" controls>
+                        <source src="{{ question.audio.url }}" >
+                    </audio>
+                    {% endif %}
+                    {% if question.video %}
+                    <video class="mx-auto mt-2" style="max-width: 80%" controls>
+                        <source src="{{ question.video.url }}" >
+                    </video>
+                    {% endif %}
+
                     <p class="text-black mt-0" style="font-size: 18px">{{ question }}</p>
                     <div class="list-group">
                         <div class="list-group-item">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="{{ question.id }}" value="a" id="answerA{{ question.id }}" 
-                                {% if question.correct == 'a' %}checked{% endif %} readonly>
+                                {% if question.correct == 'a' %}checked{% endif %} readonly="true">
                                 <label class="form-check-label" for="answerA{{ question.id }}">
                                 {{ question.a}}
                                 </label>
@@ -109,7 +136,7 @@
                         <div class="list-group-item">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="{{ question.id }}" value="b" id="answerB{{ question.id }}" 
-                                {% if question.correct == 'b' %}checked{% endif %} readonly>
+                                {% if question.correct == 'b' %}checked{% endif %} readonly="true">
                                 <label class="form-check-label" for="answerB{{ question.id }}">
                                 {{ question.b }}
                                 </label>
@@ -120,7 +147,7 @@
                         <div class="list-group-item">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="{{ question.id }}" value="c" id="answerC{{ question.id }}" 
-                                {% if question.correct == 'c' %}checked{% endif %} readonly>
+                                {% if question.correct == 'c' %}checked{% endif %} readonly="true">
                                 <label class="form-check-label" for="answerC{{ question.id }}">
                                 {{ question.c }}
                                 </label>
@@ -131,7 +158,7 @@
                         <div class="list-group-item">
                             <div class="form-check ">
                                 <input class="form-check-input" type="radio" name="{{ question.id }}" value="d" id="answerD{{ question.id }}" 
-                                {% if question.correct == 'd' %}checked{% endif %} readonly>
+                                {% if question.correct == 'd' %}checked{% endif %} readonly="true" >
                                 <label class="form-check-label" for="answerD{{ question.id }}">
                                 {{ question.d }}
                                 </label>
@@ -142,7 +169,7 @@
                         <div class="list-group-item">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="{{ question.id }}" value="e" id="answerE{{ question.id }}" 
-                                {% if question.correct == 'e' %}checked{% endif %} readonly>
+                                {% if question.correct == 'e' %}checked{% endif %} readonly >
                                 <label class="form-check-label" for="answerE{{ question.id }}">
                                 {{ question.e}}
                                 </label>
@@ -154,7 +181,7 @@
                 {% endif %}
 
                 {% if editingQuestionId == question.id %}
-                <form action="{% url 'edit_delete_question' question.id %}" method="post" id="question_{{ question.id }}">
+                <form action="{% url 'edit_delete_question' question.id %}" method="post" id="question_{{ question.id }}" enctype="multipart/form-data">
                     {% csrf_token %}
                     <input type="hidden" name="_method" value="put" />
                     <div class="form-group mt-2">
@@ -191,6 +218,18 @@
                                 <option value="d" {% if question.correct == 'd' %}selected{% endif %}>D</option>
                                 <option value="e" {% if question.correct == 'e' %}selected{% endif %}>E</option>
                             </select>
+                        </div>
+                        <div class="form-group col-12 col-xl-6">
+                            <label for="video" class="form-label">Video:</div>
+                            <input type="file" name="video" accept="video/*" />
+                        </div>
+                        <div class="form-group col-12 col-xl-6">
+                            <label for="audio" class="form-label">Audio:</div>
+                            <input type="file" name="audio" accept="audio/*" />
+                        </div>
+                        <div class="form-group col-12 col-xl-6">
+                            <label for="image" class="form-label">Image:</div>
+                            <input type="file" name="image" accept="image/*" />
                         </div>
                     </div>
                     <div class="form-group mt-2">

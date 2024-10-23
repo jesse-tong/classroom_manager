@@ -4,6 +4,19 @@
     <div class="container py-3">
         <div class="row">
 
+            <div class="col-12">
+                <form action="{% url 'all_task_schedules' %}" method="GET" class="mb-3">
+                    <div class="d-flex">
+                        <span class="my-auto me-3">Filter: </span>
+                        
+                        <input type="date" name="dateStart" id="dateStart" class="form-control" value="{{ dateStart }}"/>
+                        <span class="mx-2 my-auto"> to </span>
+                        <input type="date" name="dateEnd" id="dateEnd" class="form-control" value="{{ dateEnd }}"/>
+                        <button class="btn btn-primary ms-3" type="submit">Filter</button>
+                        
+                    </div>
+                </form>
+            </div>
             <!-- Calendar -->
             <div class="col-12 col-lg-4">
                 <div class="month">
@@ -61,6 +74,42 @@
 
             <!-- Upcoming and late tasks-->
             <div class="col-12 col-lg-8">
+                {% if filterResult %}
+                <h3>Filter result</h3>
+                {% endif %}
+                {% for task in filterResult %}
+                <a href="{% url 'task_details' task.id %}" class="text-decoration-none">
+                    <div class="border rounded p-3 mb-3">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-primary rounded-circle me-2" style="width: 50px; height: 50px; position: relative;">
+                                {% if task.isAssignment %}
+                                    <i class="bi bi-bookmarks text-white" style="font-size: 20px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
+                                {% else %}
+                                    <i class="bi bi-list-task text-white" style="font-size: 20px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
+                                {% endif %}
+                            </div>
+                            <div class="ms-2">
+                                <h5 class="text-black m-auto">{{ task.title }}</h5>
+                                <p class="text-secondary m-auto"><small>Due Date: {{ task.deadline }}</small></p>
+                            </div>
+                            
+                            <div class="ms-auto my-auto text-center">
+                                <p class="text-secondary mb-2 mx-auto">GPA</p>
+                                {% if task.gpa %}
+                                <h5 class="text-black">{{ task.gpa }}</h5>
+                                {% else %}
+                                <p class="text-secondary">Not graded</p>
+                                {% endif %}
+                            </div>
+                            
+                        </div>
+                        
+                    </div>
+                </a>
+                {% endfor %}
+
+                {% if not filterResult %}
+
                 <h3>Upcoming tasks</h3>
                 {% if not upcomingTasks %}
                 <p><i>No upcoming tasks</i></p>
@@ -81,6 +130,16 @@
                                 <h5 class="text-black m-auto">{{ upcomingTask.title }}</h5>
                                 <p class="text-secondary m-auto"><small>Due Date: {{ upcomingTask.deadline }}</small></p>
                             </div>
+                            
+                            <div class="ms-auto my-auto text-center">
+                                <p class="text-secondary mb-2 mx-auto">GPA</p>
+                                {% if upcomingTask.gpa %}
+                                <h5 class="text-black">{{ upcomingTask.gpa }}</h5>
+                                {% else %}
+                                <p class="text-secondary">Not graded</p>
+                                {% endif %}
+                            </div>
+                            
                         </div>
                         
                     </div>
@@ -106,10 +165,22 @@
                                 <h5 class="text-black m-auto">{{ lateTask.title }}</h5>
                                 <p class="text-secondary m-auto"><small>Due Date: {{ lateTask.deadline }}</small></p>
                             </div>
+                            
+                            <div class="ms-auto my-auto text-center">
+                                <p class="text-secondary mb-2 mx-auto">GPA</p>
+                                {% if upcomingTask.gpa %}
+                                <h5 class="text-black">{{ upcomingTask.gpa }}</h5>
+                                {% else %}
+                                <p class="text-secondary">Not graded</p>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                 </a>
                 {% endfor %}
+
+                <!--End if not filter result-->
+                {% endif %}
 
                 <h3>Joined groups</h3>
                 {% if not joinedGroups %}

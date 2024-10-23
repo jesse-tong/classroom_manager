@@ -14,6 +14,7 @@ class Classroom(models.Model):
     students = models.ManyToManyField(User, related_name="classroom_student")
     description = models.CharField(max_length=3000)
     background = models.CharField(max_length=200, default=get_random_class_image)
+    searchable = models.BooleanField(default=False)
     def __str__(self):
         return self.name
     def asjson(self):
@@ -74,6 +75,7 @@ def submission_directory_path(instance, filename):
 def group_directory_path(instance, filename):
     return "group_{0}/{1}".format(instance.learnGroup.id, filename)
 
+
 class SubmissionFile(models.Model):
     file = models.FileField(upload_to=submission_directory_path, null=True)
     comment = models.CharField(max_length=3000)
@@ -118,12 +120,17 @@ class Quiz(models.Model):
     title = models.CharField(max_length=200)
     description = models.CharField(max_length=3000)
     classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE)
+    timeLimit = models.IntegerField(null=True)
     deadline = models.DateTimeField(null=True)
     def __str__(self):
         return self.title
     
+    
 class QuizQuestion(models.Model):
     question = models.CharField(max_length=2000)
+    image = models.FileField(upload_to="quiz_image", null=True)
+    audio = models.FileField(upload_to="quiz_audio", null=True)
+    video = models.FileField(upload_to="quiz_video", null=True)
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     a = models.CharField(max_length=500)
     b = models.CharField(max_length=500)

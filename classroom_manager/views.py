@@ -123,12 +123,17 @@ def classroomPage(request: HttpRequest):
         #Q object represent filter object that can have logical operators like | and &
         #Here is the query to find any classroom where the any student or any teacher in the classroom
         #has current logged in user ID
-        classroomsUserIsStudent= Classroom.objects \
-            .filter(Q(students__id__contains=currentUserId))
-        classroomsUserIsTeacher= Classroom.objects \
-            .filter(Q(teachers__id__contains=currentUserId))
+        if request.GET.get('searchClassroom'):
+            classroomsUserIsStudent= Classroom.objects.filter(Q(students__id__contains=currentUserId) & Q(name__contains=request.GET.get('searchClassroom')))
+            classroomsUserIsTeacher= Classroom.objects.filter(Q(teachers__id__contains=currentUserId) & Q(name__contains=request.GET.get('searchClassroom')))
+        else:
+            classroomsUserIsStudent= Classroom.objects \
+                .filter(Q(students__id__contains=currentUserId))
+            classroomsUserIsTeacher= Classroom.objects \
+                .filter(Q(teachers__id__contains=currentUserId))
+            
         context = {'classroomsUserIsStudent': classroomsUserIsStudent, 
-                   'classroomsUserIsTeacher': classroomsUserIsTeacher}
+                   'classroomsUserIsTeacher': classroomsUserIsTeacher, 'searchClassroom': request.GET.get('searchClassroom')}
         return render(request, 'classroom.html', context)
     elif request.method == 'POST':
         if request.POST.get('name') == None:
@@ -157,9 +162,16 @@ def classroomCreatePage(request: HttpRequest):
             return redirect(reverse('classroom_create'))
         name = request.POST.get('name')
         description = request.POST.get('description')
+
+        isSearchable = request.POST.get('searchable')
+        if isSearchable != None:
+            isSearchable = True
+        else:
+            isSearchable = False
+
         if description == None:
             description = ''
-        newClassroom = Classroom.objects.create(name=name, description=description)
+        newClassroom = Classroom.objects.create(name=name, description=description, searchable=isSearchable)
         currentUser = User.objects.get(id=request.user.id)
 
         newClassroom.teachers.add(currentUser)
@@ -340,6 +352,12 @@ def classroomDetailPage(request: HttpRequest, id):
                 return redirect('/classroom/create')
             name = request.POST.get('name')
             description = request.POST.get('description')
+            isSearchable = request.POST.get('searchable')
+            if isSearchable != None:
+                isSearchable = True
+            else:
+                isSearchable = False
+
             if description == None:
                 description = ''
             classroom = Classroom.objects.filter(id=id).first()
@@ -347,7 +365,7 @@ def classroomDetailPage(request: HttpRequest, id):
                 messages.error(request, 'Classroom with ID ' + id + ' does not exists!')
                 return redirect('/classroom')
             
-            classroom.name = name; classroom.description = description
+            classroom.name = name; classroom.description = description; classroom.searchable = isSearchable
             classroom.save()
             messages.success(request, 'Edit classroom successfully')
             return redirect('/classroom')
@@ -622,11 +640,59 @@ def submissionDetailsPage(request: HttpRequest, submissionId: int):
 def allTaskSchedules(request: HttpRequest):
     if request.method == 'GET':
         now = timezone.now()
-        lateTaskScope = now - relativedelta.relativedelta(months=2)
+        lateTaskScope = now - relativedelta.relativedelta(months=3)
 
+        dateStart = None; dateEnd = None
+        if request.GET.get('dateStart'):
+            try:
+                dateStart = dateparse(request.GET.get('dateStart'))
+            except:
+                pass
+        
+        if request.GET.get('dateEnd'):
+            try:
+                dateEnd = dateparse(request.GET.get('dateEnd'))
+            except:
+                pass
+
+        
+        if dateStart != None and dateEnd == None:
+            filterResult = ClassroomTask.objects.filter(Q(classroom__students__id__contains=request.user.id) & Q(deadline__gte=dateStart)).all()
+        elif dateEnd != None and dateStart == None:
+            filterResult = ClassroomTask.objects.filter(Q(classroom__students__id__contains=request.user.id) & Q(deadline__lte=dateEnd)).all()
+        elif dateEnd != None and dateStart != None:
+            filterResult = ClassroomTask.objects.filter(Q(classroom__students__id__contains=request.user.id) & Q(deadline__lte=dateEnd) & Q(deadline__gte=dateStart)).all()
+        else:
+            filterResult = []
+        
         upcomingTasks = ClassroomTask.objects.filter((Q(classroom__students__id__contains=request.user.id) )& Q(deadline__gte=now) ).all()
-        lateTasks = ClassroomTask.objects.filter((Q(classroom__students__id__contains=request.user.id) )& Q(deadline__gte=lateTaskScope) & Q(deadline__lte=now)).all()
+        
+        lateTasks = ClassroomTask.objects.filter((Q(classroom__students__id__contains=request.user.id) )& Q(deadline__gte=lateTaskScope)
+                                                      & Q(deadline__lte=now)).all()
+        
+        #Add grades to assignment task
+        #If there's a submission from current user, assign the grade to the task of user; else None
+        for i in range(len(lateTasks)):
+            lateTasks[i].gpa = None
+            if lateTasks[i].isAssignment and Submission.objects.filter(task=lateTasks[i], student__id=request.user.id).exists():
+                submission = Submission.objects.filter(task=lateTasks[i], student__id=request.user.id).first()
+                if submission:
+                    lateTasks[i].gpa = submission.gpa
 
+        for i in range(len(upcomingTasks)):
+            upcomingTasks[i].gpa = None
+            if upcomingTasks[i].isAssignment and Submission.objects.filter(task=upcomingTasks[i], student__id=request.user.id).exists():
+                submission = Submission.objects.filter(task=upcomingTasks[i], student__id=request.user.id).first()
+                if submission:
+                    upcomingTasks[i].gpa = submission.gpa
+
+        for i in range(len(filterResult)):
+            filterResult[i].gpa = None
+            if filterResult[i].isAssignment and Submission.objects.filter(task=filterResult[i], student__id=request.user.id).exists():
+                submission = Submission.objects.filter(task=filterResult[i], student__id=request.user.id).first()
+                if submission:
+                    filterResult[i].gpa = submission.gpa
+        
         #Variables for calendar
         taskDates = [task.deadline for task in upcomingTasks] + [task.deadline for task in lateTasks]
         taskDates = list(set(taskDates))
@@ -660,12 +726,14 @@ def allTaskSchedules(request: HttpRequest):
         monthString = now.strftime("%B")
         yearString = str(now.year)
 
+        # End variables for calendar
+
         groupsJoined = LearnGroup.objects.filter(students__id__contains=request.user.id).all()
 
         context = {'upcomingTasks': upcomingTasks, 'lateTasks': lateTasks, 
                    'daysArray': daysArray, 'currentDay': currentDay, 'monthString': monthString, 
                    'yearString': yearString, 'daysWithDeadlines': daysWithDeadlines, 'lastMonth': lastMonth, 
-                   'nextMonth': nextMonth, 'joinedGroups': groupsJoined}    
+                   'nextMonth': nextMonth, 'joinedGroups': groupsJoined, 'filterResult': filterResult, 'dateStart': request.GET.get('dateStart'),'dateEnd': request.GET.get('dateEnd') }    
         return render(request, 'all_task_schedules.html', context)
     else:
         return render(request, '404page.html')
@@ -1260,7 +1328,12 @@ def addQuestionToQuiz(request: HttpRequest, quizId: int):
             messages.error(request, 'Answer must be a, b, c, d or e!')
             return redirect(reverse('quiz_question_edit', args=[quizId]))
         
-        newQuestion = QuizQuestion.objects.create(quiz=quiz, question=question, correct=answer, a=a, b=b, c=c, d=d, e=e)
+        image = request.FILES.get('image')
+        audio = request.FILES.get('audio')
+        video = request.FILES.get('video')
+        
+        newQuestion = QuizQuestion.objects.create(quiz=quiz, question=question, correct=answer, 
+                                                  a=a, b=b, c=c, d=d, e=e, audio=audio, video=video, image=image)
         newQuestion.save()
         messages.success(request, 'Add question successfully!')
         return redirect(reverse('quiz_question_edit', args=[quizId]))
@@ -1324,10 +1397,15 @@ def editDeleteQuestion(request: HttpRequest, questionId: int):
             question.d = request.POST.get('d')
             question.e = request.POST.get('e')
             answer = request.POST.get('answer')
+
+            image = request.FILES.get('image')
+            audio = request.FILES.get('audio')
+            video = request.FILES.get('video')
             if answer not in valid_answer:
                 messages.error(request, 'Answer must be a, b, c, d or e!')
                 return redirect(reverse('quiz_question_edit', args=[question.quiz.id]))
             question.answer = answer
+            question.image = image; question.audio = audio; question.video = video;
             question.save()
             messages.success(request, 'Edit question successfully!')
             return redirect(reverse('quiz_question_edit', args=[question.quiz.id]))

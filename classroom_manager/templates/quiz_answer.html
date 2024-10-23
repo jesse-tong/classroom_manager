@@ -7,6 +7,21 @@
 {% for question in questions %}
     <div class="border rounded-2 px-3 py-3 mb-3 mt-0 shadow-sm bg-white" style="">
         <p class="text-secondary">Question {{ forloop.counter }}:</p>
+
+        {% if question.image %}
+        <img src="{{ question.image.url }}" alt="{{ question.image.name }}" class="mx-auto mt-2" style="max-width: 80%"/>
+        {% endif %}
+        {% if question.audio %}
+        <audio class="mx-auto mt-2" style="max-width: 80%" controls>
+            <source src="{{ question.audio.url }}" >
+        </audio>
+        {% endif %}
+        {% if question.video %}
+        <video class="mx-auto mt-2" style="max-width: 80%" controls>
+            <source src="{{ question.video.url }}" >
+        </video>
+        {% endif %}
+        
         <p class="text-black mt-0" style="font-size: 18px">{{ question }}</p>
         <div class="list-group">
             <div class="list-group-item">

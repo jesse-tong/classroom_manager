@@ -246,7 +246,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <form id="deleteForm" action="/classroom/task/{{ task.id }}" method="post">
+                        <form id="deleteForm" action="{% url 'task_details' task.id %}" method="post">
                             {% csrf_token %}
                             <input type="hidden" name="_method" value="delete">
                             <button type="submit" class="btn btn-danger">Delete task/assignment</button>
