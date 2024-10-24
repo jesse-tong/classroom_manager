@@ -671,7 +671,7 @@ def allTaskSchedules(request: HttpRequest):
         elif dateEnd != None and dateStart != None:
             filterResult = ClassroomTask.objects.filter(Q(classroom__students__id__contains=request.user.id) & Q(deadline__lte=dateEnd) & Q(deadline__gte=dateStart)).all()
         else:
-            filterResult = []
+            filterResult = None
         
         upcomingTasks = ClassroomTask.objects.filter((Q(classroom__students__id__contains=request.user.id) )& Q(deadline__gte=now) ).all()
         
@@ -694,12 +694,13 @@ def allTaskSchedules(request: HttpRequest):
                 if submission:
                     upcomingTasks[i].gpa = submission.gpa
 
-        for i in range(len(filterResult)):
-            filterResult[i].gpa = None
-            if filterResult[i].isAssignment and Submission.objects.filter(task=filterResult[i], student__id=request.user.id).exists():
-                submission = Submission.objects.filter(task=filterResult[i], student__id=request.user.id).first()
-                if submission:
-                    filterResult[i].gpa = submission.gpa
+        if filterResult != None:
+            for i in range(len(filterResult)):
+                filterResult[i].gpa = None
+                if filterResult[i].isAssignment and Submission.objects.filter(task=filterResult[i], student__id=request.user.id).exists():
+                    submission = Submission.objects.filter(task=filterResult[i], student__id=request.user.id).first()
+                    if submission:
+                        filterResult[i].gpa = submission.gpa
         
         #Variables for calendar
         taskDates = [task.deadline for task in upcomingTasks] + [task.deadline for task in lateTasks]

@@ -74,9 +74,14 @@
 
             <!-- Upcoming and late tasks-->
             <div class="col-12 col-lg-8">
-                {% if filterResult %}
+                {% if filterResult != None %}
                 <h3>Filter result</h3>
                 {% endif %}
+
+                {% if not filterResult %}
+                <p><i>No task found</i></p>
+                {% endif %}
+
                 {% for task in filterResult %}
                 <a href="{% url 'task_details' task.id %}" class="text-decoration-none">
                     <div class="border rounded p-3 mb-3">
