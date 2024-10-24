@@ -1411,7 +1411,7 @@ def editDeleteQuestion(request: HttpRequest, questionId: int):
             if answer not in valid_answer:
                 messages.error(request, 'Answer must be a, b, c, d or e!')
                 return redirect(reverse('quiz_question_edit', args=[question.quiz.id]))
-            question.answer = answer
+            question.correct = answer
             question.image = image; question.audio = audio; question.video = video;
             question.save()
             messages.success(request, 'Edit question successfully!')
