@@ -127,10 +127,18 @@ def classroomPage(request: HttpRequest):
             classroomsUserIsStudent= Classroom.objects.filter(Q(students__id__contains=currentUserId) & Q(name__contains=request.GET.get('searchClassroom')))
             classroomsUserIsTeacher= Classroom.objects.filter(Q(teachers__id__contains=currentUserId) & Q(name__contains=request.GET.get('searchClassroom')))
         else:
-            classroomsUserIsStudent= Classroom.objects \
-                .filter(Q(students__id__contains=currentUserId))
-            classroomsUserIsTeacher= Classroom.objects \
-                .filter(Q(teachers__id__contains=currentUserId))
+            classroomsUserIsStudent= Classroom.objects.filter(Q(students__id__contains=currentUserId))
+            classroomsUserIsTeacher= Classroom.objects.filter(Q(teachers__id__contains=currentUserId))
+
+        for i in range(len(classroomsUserIsStudent)):
+            #Get assignment completion rate for the logged in student
+            student = User.objects.filter(id=currentUserId).first()
+            task_count = ClassroomTask.objects.filter(classroom=classroomsUserIsStudent[i], isAssignment=True).count()
+            completed_task_count = Submission.objects.filter(student=student, task__classroom=classroomsUserIsStudent[i]).count()
+            if task_count == 0:
+                classroomsUserIsStudent[i].completionRate = 100.0
+            else:
+                classroomsUserIsStudent[i].completionRate = round((completed_task_count / task_count) * 100.0, 2)
             
         context = {'classroomsUserIsStudent': classroomsUserIsStudent, 
                    'classroomsUserIsTeacher': classroomsUserIsTeacher, 'searchClassroom': request.GET.get('searchClassroom')}

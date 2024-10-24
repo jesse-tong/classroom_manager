@@ -8,7 +8,8 @@
         <div><h2 class="mb-2 mb-md-0">Classrooms</h2></div>
         <form action="{% url 'classroom_list' %}" method="GET">
             <div class="input-group">
-                <input type="text" class="form-control" name="searchClassroom" placeholder="Search classroom" value="{{ searchClassroom }}">
+                <input type="text" class="form-control" name="searchClassroom" placeholder="Search classroom" 
+                {% if searchClassroom != None %} value="{{ searchClassroom }}" {% else %} value="" {% endif %}>
                 <button class="btn btn-primary" type="submit">Search</button>
             </div>
         </form>
@@ -54,11 +55,19 @@
         <div class="col-12 col-lg-6 col-xxl-4 px-2 py-2">
             <div class="card">
                 <img class="card-img-top" src="{% static classroom.background %}" />
-                <div class="card-body">
-                    <h5 class="card-title">{{ classroom.name }}</h5>
-                    <p class="card-text">{{ classroom.description|truncatechars:50 }}</p>
-                    <a href="{% url 'classroom_details' classroom.id %}" class="btn btn-primary">View</a>
-                    
+                <div class="card-body d-flex ">
+                    <div class="">
+                        <h5 class="card-title">{{ classroom.name }}</h5>
+                        <p class="card-text">{{ classroom.description|truncatechars:50 }}</p>
+                        <a href="{% url 'classroom_details' classroom.id %}" class="btn btn-primary">View</a>
+                    </div>
+                    <div class="ms-auto d-flex flex-column">
+                        <p class="text-secondary mb-0"><small>Completion rate</small></p>
+                        <p class="text-dark"> {{ classroom.completionRate }}%</p>
+                        <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                            <div class="progress-bar" style="width: {{ classroom.completionRate }}%"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
