@@ -1211,7 +1211,7 @@ def cloneClassroom(request: HttpRequest, classroomId: int):
             description = classroom.description
         user = User.objects.filter(id=request.user.id).first()
         newClassroom = Classroom.objects.create(name=name, description=description)
-        newClassroom.students.add(user)
+        newClassroom.teachers.add(user)
 
         tasks = ClassroomTask.objects.filter(classroom=classroom).all()
         for task in tasks:
@@ -1231,8 +1231,7 @@ def quizPage(request: HttpRequest, classroomId: int):
         classroom = Classroom.objects.filter(id=classroomId).first()
         if classroom == None:
             return render(request, '404page.html')
-        if not isTeacher(request.user.id, classroomId):
-            return render(request, '403page.html')
+        
         
         quizes = Quiz.objects.filter(classroom=classroom).all()
         for i in range(len(quizes)):
