@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 #models import
 from .models import *
+from datetime import datetime
 
 #authentication import
 from django.contrib.auth import authenticate, login, logout
@@ -66,6 +67,7 @@ def registerPage(request):
         else:
             user = User.objects.create_user(username=username, email=email)
             user.set_password(password)
+            user_info = UserInfo.objects.create(user=user)
             group, created = Group.objects.get_or_create(name='student')
             user.groups.add(group)
             user.save()
@@ -90,7 +92,42 @@ def loginPage(request):
 @login_required(login_url='login')
 def editProfile(request: HttpRequest):
     if request.method == 'GET':
-        return render(request, 'edit_profile.html')
+        user = User.objects.filter(id=request.user.id).first()
+        userInfo = UserInfo.objects.filter(user=user).first()
+        context = {'user': user, 'userInfo': userInfo}
+        return render(request, 'edit_profile.html', context)
+    if request.method == 'POST':
+        phone = request.POST.get('phone')
+        address = request.POST.get('address')
+        bio = request.POST.get('bio')
+        avatar = request.FILES.get('avatar')
+        fullName = request.POST.get('fullName')
+        website = request.POST.get('website')
+        website2 = request.POST.get('website2')
+        userInfo = UserInfo.objects.filter(user=request.user).first()
+        if userInfo == None:
+            userInfo = UserInfo.objects.create(user=request.user)
+        userInfo.phone = phone
+        userInfo.address = address
+        userInfo.bio = bio
+        userInfo.avatar = avatar
+        userInfo.website = website
+        userInfo.website2 = website2
+        userInfo.fullName = fullName
+        userInfo.save()
+        messages.success(request, 'Edit profile successfully!')
+
+@login_required(login_url='login')
+def profilePage(request: HttpRequest, userId: int):
+    user = User.objects.filter(id=userId).first()
+    userInfo = UserInfo.objects.filter(user=user).first()
+    context = {'user': user, 'userInfo': userInfo}
+    return render(request, 'profile_page.html', context)
+
+@login_required(login_url='login')
+def changePassword(request: HttpRequest):
+    if request.method == 'GET':
+        return render(request, 'change_password.html')
     elif request.method == 'POST':
         username = request.POST.get('username')
         email = request.POST.get('email')

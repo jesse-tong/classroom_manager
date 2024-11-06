@@ -57,5 +57,7 @@ urlpatterns = [
     path('classroom/quiz/<int:quizId>/answers', views.studentQuizSubmissions, name="student_quiz_submissions"),
     
     path('user/schedule', views.allTaskSchedules, name="all_task_schedules"),
-    path('user/edit-profile', views.editProfile, name="edit_profile"),
+    path('user/change-password', views.changePassword, name="change_password"),
+    path('user/profile/<int:userId>', views.profilePage, name="profile_page"),
+    path('user/profile/edit', views.editProfile, name="edit_profile"),
 ]

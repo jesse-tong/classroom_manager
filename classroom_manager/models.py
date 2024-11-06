@@ -1,5 +1,7 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.models import User, Group, Permission
+from django.contrib.auth.base_user import BaseUserManager
 from datetime import datetime
 import random
 
@@ -7,6 +9,18 @@ asset_backgrounds = ['img_backtoschool.jpg', 'img_code.jpg', 'img_gamenight.jpg'
 
 def get_random_class_image():
     return random.choice(asset_backgrounds)
+
+class UserInfo(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    phone = models.CharField(max_length=20, default="")
+    address = models.CharField(max_length=300, default="")
+    bio = models.CharField(max_length=500, default="")
+    website = models.CharField(max_length=400, default="")
+    website2 = models.CharField(max_length=400, default="")
+    fullName = models.CharField(max_length=200, default="")
+    avatar = models.ImageField(upload_to='avatars', default='avatars/default.jpg')
+    def __str__(self):
+        return self.user.username
 
 class Classroom(models.Model):
     name = models.CharField(max_length=200)

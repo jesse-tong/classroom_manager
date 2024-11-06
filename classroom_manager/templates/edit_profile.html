@@ -1,31 +1,124 @@
 {% extends 'navbar.html' %}
 
-{% block content %}
-    
-    <h1>Edit profile</h1>
-    <form method="POST" class="needs-validation" action="{% url 'edit_profile' %}">
-        {% csrf_token %}
-        <!-- Add your form fields here -->
-        <div class="mb-3">
-            <label for="username" class="form-label">New username:</label>
-            <input type="text" class="form-control" id="username" name="username">
-        </div>
-        
-        <div class="mb-3">
-            <label for="email" class="form-label">New email:</label>
-            <input type="email" class="form-control" id="email" name="email">
-        </div>
-        
-        <div class="mb-3">
-            <label for="password" class="form-label">New password:</label>
-            <input type="password" class="form-control" id="password" name="password" >
-        </div>
+{% block title %}Edit Profile{% endblock %}
 
-        <div class="mb-3">
-            <label for="reenter-password" class="form-label">Reenter new password:</label>
-            <input type="password" class="form-control" id="reenter-password" name="reenterPassword">
+{% block content %}
+<div class="row">
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <img src="{{ userInfo.avatar }}" alt="avatar"
+                class="rounded-circle img-fluid" style="width: 150px;">
+                <h5 class="my-3">{{ user.username }}</h5>
+                <p class="text-muted mb-4">{{ userInfo.address }}</p>
+            </div>
         </div>
         
-        <button type="submit" class="btn btn-primary">Save</button>
-    </form>
+    </div>
+    <div class="col-lg-8">
+        <div class="card mb-4">
+        <div class="card-body">
+            <form method="POST" class="needs-validation" action="{% url 'edit_profile' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+                <div class="row">
+                    <div class="col-sm-3">
+                        <p class="mb-0">Full Name</p>
+                    </div>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="fullName" name="fullName" value="{{ userInfo.fullName }}">
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <p class="mb-0">Email</p>
+                    </div>
+                    <div class="col-sm-9">
+                        <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}">
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <p class="mb-0">Phone</p>
+                    </div>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="phone" name="phone" value="{{ userInfo.phone }}">
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <p class="mb-0">Address</p>
+                    </div>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="address" name="address" value="{{ userInfo.address }}">
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <p class="mb-0">Website</p>
+                    </div>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="website" name="website" value="{{ userInfo.website }}">
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <p class="mb-0">Website 2</p>
+                    </div>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="website2" name="website2" value="{{ userInfo.website2 }}">
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <p class="mb-0">Avatar</p>
+                    </div>
+                    <div class="col-sm-9">
+                        <input type="file" class="form-control" id="avatar" name="avatar">
+                    </div>
+                </div>
+                <button class="btn btn-primary mt-3" type="submit">Save</button>
+            </form>
+        </div>
+        
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h4>Change password</h4>
+                <form method="POST" class="needs-validation" action="{% url 'change_password' %}">
+                    {% csrf_token %}
+                    <!-- Add your form fields here -->
+                    <div class="mb-3">
+                        <label for="username" class="form-label">New username:</label>
+                        <input type="text" class="form-control" id="username" name="username">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="email" class="form-label">New email:</label>
+                        <input type="email" class="form-control" id="email" name="email">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">New password:</label>
+                        <input type="password" class="form-control" id="password" name="password" >
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="reenter-password" class="form-label">Reenter new password:</label>
+                        <input type="password" class="form-control" id="reenter-password" name="reenterPassword">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+            </div>
+        </div>  
+    </div>
+</div>
 {% endblock %}
