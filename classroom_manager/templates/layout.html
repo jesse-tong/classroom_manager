@@ -36,7 +36,7 @@
     <script src="{{ jitsiInstance }}/external_api.js"></script>
     
 </head>
-<body style="background: url({% static 'background.jpg' %}); background-size: 100% 100%">
+<body style="background: url('{% static 'background.jpg' %}'); background-size: 100% 100%">
     
     <nav class="navbar navbar-dark navbar-expand-lg px-4" style="background-image: linear-gradient(90deg, #00b2b3, #79c680, #655f99, #a4b258)">
         
@@ -69,7 +69,8 @@
                         {% endif %}
                         {% if request.user.is_authenticated %}
                         <li><a class="dropdown-item" href="#">Welcome back, {{ request.user.username }}</a></li>
-                        <li><a class="dropdown-item" href="/user/edit-profile">Edit profile</a></li>
+                        <li><a class="dropdown-item" href="{% url 'edit_profile' %}">Edit profile</a></li>
+                        <li><a class="dropdown-item" href="{% url 'profile_page' request.user.id %}">Profile page</a></li>
                         <li><a class="dropdown-item" href="/logout">Logout</a></li>
                         {% endif %}
                     </ul>
@@ -182,7 +183,11 @@
                     <ul class="nav flex-column">
                         <li class="nav-item mb-2"><a href="/login" class="nav-link p-0 text-muted">Login</a></li>
                         <li class="nav-item mb-2"><a href="/register" class="nav-link p-0 text-muted">Register</a></li>
-                        <li class="nav-item mb-2"><a href="/settings" class="nav-link p-0 text-muted">Settings</a></li>
+                        {% if request.user.is_authenticated %}
+                        <li class="nav-item mb-2"><a href="{% url 'edit_profile' %}" class="nav-link p-0 text-muted">Edit profile</a></li>
+                        <li class="nav-item mb-2"><a href="{% url 'profile_page' request.user.id %}" class="nav-link p-0 text-muted">Profile</a></li>
+                        <li class="nav-item mb-2"><a href="/logout" class="nav-link p-0 text-muted">Logout</a></li>
+                        {% endif %}
                         
                     </ul>
                 </div>
@@ -219,8 +224,7 @@
             $("#assignmentFiles").fileinput();
         });
 
-        {% block script %}
-        {% endblock %}
+        
     </script>
 </body>
 </html>

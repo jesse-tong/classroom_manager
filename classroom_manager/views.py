@@ -96,7 +96,7 @@ def editProfile(request: HttpRequest):
         userInfo = UserInfo.objects.filter(user=user).first()
         context = {'user': user, 'userInfo': userInfo}
         return render(request, 'edit_profile.html', context)
-    if request.method == 'POST':
+    elif request.method == 'POST':
         phone = request.POST.get('phone')
         address = request.POST.get('address')
         bio = request.POST.get('bio')
@@ -104,6 +104,7 @@ def editProfile(request: HttpRequest):
         fullName = request.POST.get('fullName')
         website = request.POST.get('website')
         website2 = request.POST.get('website2')
+        bio = request.POST.get('bio')
         userInfo = UserInfo.objects.filter(user=request.user).first()
         if userInfo == None:
             userInfo = UserInfo.objects.create(user=request.user)
@@ -116,6 +117,7 @@ def editProfile(request: HttpRequest):
         userInfo.fullName = fullName
         userInfo.save()
         messages.success(request, 'Edit profile successfully!')
+        return redirect(reverse('edit_profile'))
 
 @login_required(login_url='login')
 def profilePage(request: HttpRequest, userId: int):

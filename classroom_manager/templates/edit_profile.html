@@ -7,9 +7,10 @@
     <div class="col-lg-4">
         <div class="card mb-4">
             <div class="card-body text-center">
-                <img src="{{ userInfo.avatar }}" alt="avatar"
+                <img src="{{ userInfo.avatar.url }}" alt="{{ userInfo.avatar.name }}"
                 class="rounded-circle img-fluid" style="width: 150px;">
                 <h5 class="my-3">{{ user.username }}</h5>
+                <p class="text-muted mb-2">{{ user.email }}</p>
                 <p class="text-muted mb-4">{{ userInfo.address }}</p>
             </div>
         </div>
@@ -67,6 +68,15 @@
                 <hr>
                 <div class="row">
                     <div class="col-sm-3">
+                        <p class="mb-0">Biography</p>
+                    </div>
+                    <div class="col-sm-9">
+                        <textarea class="form-control" id="biography" name="bio" rows="3">{{ userInfo.bio }}</textarea>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
                         <p class="mb-0">Website 2</p>
                     </div>
                     <div class="col-sm-9">
@@ -87,6 +97,9 @@
         </div>
         
         </div>
+    </div>
+    <div class="d-none d-lg-block col-lg-4">
+    
     </div>
     <div class="col-lg-8">
         <div class="card mb-4">

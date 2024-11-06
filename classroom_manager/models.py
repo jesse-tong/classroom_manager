@@ -14,7 +14,7 @@ class UserInfo(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone = models.CharField(max_length=20, default="")
     address = models.CharField(max_length=300, default="")
-    bio = models.CharField(max_length=500, default="")
+    bio = models.CharField(max_length=500, default="", null=True)
     website = models.CharField(max_length=400, default="")
     website2 = models.CharField(max_length=400, default="")
     fullName = models.CharField(max_length=200, default="")
@@ -180,3 +180,12 @@ class QuizSubmissionAnswer(models.Model):
         constraints = [
             models.CheckConstraint(check=models.Q(answer__in=['a', 'b', 'c', 'd', 'e']), name='submission_answer_constraint')
         ]
+
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
+    content = models.CharField(max_length=5000)
+    creationDate = models.DateTimeField(auto_now_add=True)
+    isRead = models.BooleanField(default=False)
+    def __str__(self):
+        return self.title + ' to ' + self.user.username
