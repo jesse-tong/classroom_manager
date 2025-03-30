@@ -31,6 +31,3 @@ python manage.py migrate
 # Start the development server
 echo "Starting server..."
 python manage.py runserver 0.0.0.0:8000
-
-# Deactivate virtual environment on exit
-deactivate
