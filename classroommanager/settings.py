@@ -29,14 +29,14 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'localhost',
     'easylib.jesse-tong.work',
-    'jesse-tong.sgp.dom.my.id',
+    'classroom-manager.sgp.dom.my.id',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     'https://easylib.jesse-tong.work',
     'http://easylib.jesse-tong.work',
-    'http://jesse-tong.sgp.dom.my.id',
-    'https://jesse-tong.sgp.dom.my.id',
+    'http://classroom-manager.sgp.dom.my.id',
+    'https://classroom-manager.sgp.dom.my.id',
 ]
 
 # Application definition
