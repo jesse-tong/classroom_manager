@@ -35,6 +35,8 @@ ALLOWED_HOSTS = [
 CSRF_TRUSTED_ORIGINS = [
     'https://easylib.jesse-tong.work',
     'http://easylib.jesse-tong.work',
+    'http://jesse-tong.sgp.dom.my.id',
+    'https://jesse-tong.sgp.dom.my.id',
 ]
 
 # Application definition
