@@ -3,3 +3,6 @@ media/**
 **/__pycache__
 **/migrations
 *.db
+*.pyc 
+*.pyo
+*.pyd
