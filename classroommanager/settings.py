@@ -30,6 +30,8 @@ ALLOWED_HOSTS = [
     'localhost',
     'easylib.jesse-tong.work',
     'classroom-manager.sgp.dom.my.id',
+    'lyky3p05p.pythonanywhere.com',
+    '*.pythonanywhere.com',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
@@ -37,6 +39,9 @@ CSRF_TRUSTED_ORIGINS = [
     'http://easylib.jesse-tong.work',
     'http://classroom-manager.sgp.dom.my.id',
     'https://classroom-manager.sgp.dom.my.id',
+    'https://lyky3p05p.pythonanywhere.com',
+    'http://lyky3p05p.pythonanywhere.com',
+    'https://*.pythonanywhere.com',
 ]
 
 # Application definition
