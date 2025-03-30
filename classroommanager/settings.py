@@ -29,6 +29,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'localhost',
     'easylib.jesse-tong.work',
+    'jesse-tong.sgp.dom.my.id',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
